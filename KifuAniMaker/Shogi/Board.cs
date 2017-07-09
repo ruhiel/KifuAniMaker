@@ -20,7 +20,7 @@ namespace KifuAniMaker.Shogi
         /// <summary>
         /// 手番
         /// </summary>
-        private BlackWhite _Hand;
+        public BlackWhite Turn { get; set; }
 
         /// <summary>
         /// 先手駒台
@@ -38,7 +38,7 @@ namespace KifuAniMaker.Shogi
         /// 駒台
         /// </summary>
         /// <returns></returns>
-        private List<Piece> GetHands() => _Hand == BlackWhite.Black ? _BlackHands : _WhiteHands;
+        private List<Piece> GetHands() => Turn == BlackWhite.Black ? _BlackHands : _WhiteHands;
 
         private Tuple<int, int> _OldPosition;
 
@@ -54,10 +54,38 @@ namespace KifuAniMaker.Shogi
             {"歩", typeof(Pawn)}
         };
 
+        /// <summary>
+        /// 棋戦名
+        /// </summary>
+        public string GameName { get; set; }
+
+        /// <summary>
+        /// 対局場所
+        /// </summary>
+        public string Site { get; set; }
+
+        /// <summary>
+        /// 開始日時
+        /// </summary>
+        public DateTime StartTime { get; set; }
+
+        /// <summary>
+        /// 終了日時
+        /// </summary>
+        public DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// 戦型
+        /// </summary>
+        public string Opening { get; set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public Board()
         {
             _Pieces = new Piece[9, 9];
-            _Hand = BlackWhite.Black;
+            Turn = BlackWhite.Black;
         }
 
         public void InitBoard()
@@ -107,7 +135,7 @@ namespace KifuAniMaker.Shogi
             this[1, 3] = new Pawn(BlackWhite.White);
         }
 
-        public void Next() => _Hand = _Hand.Reverse();
+        public void Next() => Turn = Turn.Reverse();
 
         /*
         public string Paint(int idx, Record record)

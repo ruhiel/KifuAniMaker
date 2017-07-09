@@ -10,6 +10,6 @@ namespace KifuAniMaker.Shogi.Utils
     {
         public static BlackWhite Reverse(this BlackWhite bw) => bw == BlackWhite.Black ? BlackWhite.White : BlackWhite.Black;
 
-        public static string ToSymbol(this BlackWhite bw) => bw == BlackWhite.Black ? "?" : "?";
+        public static string ToSymbol(this BlackWhite bw) => bw == BlackWhite.Black ? "☗" : "☖";
     }
 }

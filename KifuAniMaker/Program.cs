@@ -1,5 +1,7 @@
-﻿using System;
+﻿using KifuAniMaker.Shogi.Parser.CSA;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +12,13 @@ namespace KifuAniMaker
     {
         static void Main(string[] args)
         {
+            using (var sr = new System.IO.StreamReader(Path.Combine(System.IO.Directory.GetCurrentDirectory(),@"TextFile1.csa"), Encoding.Default))
+            {
+                // ファイルの最後まで読み込む
+                var content = sr.ReadToEnd();
+
+                CSAParser.ParseContent(content);
+            }
         }
     }
 }
