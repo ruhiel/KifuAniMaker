@@ -8,11 +8,11 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 {
     public class SetTimeLimit : ICSAStatement
     {
-        public string RemainTime { get; set; }
+        public TimeSpan RemainTime { get; set; }
 
-        public string SecondTime { get; set; }
+        public TimeSpan SecondTime { get; set; }
 
-        public SetTimeLimit(string remainTime, string secondTime)
+        public SetTimeLimit(TimeSpan remainTime, TimeSpan secondTime)
         {
             RemainTime = remainTime;
 

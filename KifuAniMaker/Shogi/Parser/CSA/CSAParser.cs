@@ -84,10 +84,12 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             // 持ち時間
             var remainTimeParser =
                 from key in Parse.String(@"$TIME_LIMIT:").Token()
-                from remainTime in Parse.Regex(@"\d\d:\d\d").Token()
+                from remainTimeMinute in Parse.Number
+                from collon in Parse.Char(':')
+                from remainTimeSecond in Parse.Number
                 from plus in Parse.Char('+')
-                from secondTime in Parse.Regex(@"\d\d").Token()
-                select (ICSAStatement)new SetTimeLimit(remainTime, secondTime);
+                from secondTime in Parse.Number
+                select (ICSAStatement)new SetTimeLimit(new TimeSpan(0, int.Parse(remainTimeMinute), int.Parse(remainTimeSecond)), new TimeSpan(0, 0, int.Parse(secondTime)));
 
             // 戦型
             var openningNameParser =
