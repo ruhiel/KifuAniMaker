@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.Diagnostics;
 using KifuAniMaker.Shogi.Pieces;
 using KifuAniMaker.Shogi.Utils;
+using KifuAniMaker.Shogi.Moves;
 
 namespace KifuAniMaker.Shogi
 {
@@ -32,27 +33,21 @@ namespace KifuAniMaker.Shogi
         /// </summary>
         private List<Piece> _WhiteHands;
 
-        private float _Rate = 1.0f;
-
         /// <summary>
         /// 駒台
         /// </summary>
         /// <returns></returns>
         private List<Piece> GetHands() => Turn == BlackWhite.Black ? _BlackHands : _WhiteHands;
 
-        private Tuple<int, int> _OldPosition;
+        /// <summary>
+        /// 指し手リスト
+        /// </summary>
+        public List<Move> Moves { get; set; }
 
-        private Dictionary<string, Type> _PieceDictionary = new Dictionary<string, Type>()
-        {
-            {"玉", typeof(King)},
-            {"金", typeof(Gold)},
-            {"銀", typeof(Silver)},
-            {"桂", typeof(Knight)},
-            {"香", typeof(Lance)},
-            {"角", typeof(Bishop)},
-            {"飛", typeof(Rook)},
-            {"歩", typeof(Pawn)}
-        };
+        /// <summary>
+        /// 再生済み指し手リスト
+        /// </summary>
+        public List<Move> Moved { get; set; }
 
         /// <summary>
         /// 棋戦名
@@ -78,6 +73,26 @@ namespace KifuAniMaker.Shogi
         /// 戦型
         /// </summary>
         public string Opening { get; set; }
+
+        /// <summary>
+        /// 先手対局者
+        /// </summary>
+        public string BlackPlayer { get; set; }
+
+        /// <summary>
+        /// 後手対局者
+        /// </summary>
+        public string WhitePlayer { get; set; }
+
+        /// <summary>
+        /// 棋戦名
+        /// </summary>
+        public string Event { get; set; }
+
+        /// <summary>
+        /// 持ち時間
+        /// </summary>
+        public int Limit { get; set; }
 
         /// <summary>
         /// コンストラクタ
@@ -135,7 +150,14 @@ namespace KifuAniMaker.Shogi
             this[1, 3] = new Pawn(BlackWhite.White);
         }
 
-        public void Next() => Turn = Turn.Reverse();
+        public void Next()
+        {
+            var move = Moves.First();
+            Moves.Remove(move);
+            Moved.Add(move);
+
+            Turn = Turn.Reverse();
+        }
 
         /*
         public string Paint(int idx, Record record)
@@ -310,26 +332,27 @@ namespace KifuAniMaker.Shogi
             }
         }
 
-        public void Move(Move move)
+        public void Move()
         {
+            var move = Moves.First();
             var destPosX = move.DestPosX;
             var destPosY = move.DestPosY;
-            if(move.ActionString == "投了")
+            if(move is Resign)
             {
                 return;
             }
-            if (move.Action == Action.Drops)
+            if (move.IsDrop)
             {
-                var piece = GetHands().First(x => x.GetType() == _PieceDictionary[move.Piece]);
+                var piece = GetHands().First(x => x.GetType() == move.Piece.GetType());
                 this[destPosX, destPosY] = piece;
                 GetHands().Remove(piece);
             }
             else
             {
-                if(move.Position == "同")
+                if(move.IsSame)
                 {
-                    destPosX = _OldPosition.Item1;
-                    destPosY = _OldPosition.Item2;
+                    destPosX = Moved.Last().DestPosX;
+                    destPosY = Moved.Last().DestPosY;
                 }
 
                 var piece = this[destPosX, destPosY];
@@ -344,7 +367,7 @@ namespace KifuAniMaker.Shogi
 
                 this[destPosX, destPosY] = this[move.SrcPosX.Value, move.SrcPosY.Value];
 
-                if (move.Action == Action.Promote)
+                if (move.IsPromote)
                 {
                     // 成
                     this[destPosX, destPosY].Promote();
@@ -352,8 +375,6 @@ namespace KifuAniMaker.Shogi
 
                 this[move.SrcPosX.Value, move.SrcPosY.Value] = null;
             }
-
-            _OldPosition = Tuple.Create(destPosX, destPosY);
 
             Next();
         }

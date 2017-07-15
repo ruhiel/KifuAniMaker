@@ -42,6 +42,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0-preview2-25405-01\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,18 +59,28 @@
     <Compile Include="Shogi\Action.cs" />
     <Compile Include="Shogi\BlackWhite.cs" />
     <Compile Include="Shogi\Board.cs" />
-    <Compile Include="Shogi\Move.cs" />
+    <Compile Include="Shogi\Moves\Move.cs" />
+    <Compile Include="Shogi\Moves\Resign.cs" />
     <Compile Include="Shogi\Options.cs" />
     <Compile Include="Shogi\Parser\CSA\CSAParser.cs" />
     <Compile Include="Shogi\Parser\CSA\CSAUtil.cs" />
     <Compile Include="Shogi\Parser\CSA\ICSAStatement.cs" />
+    <Compile Include="Shogi\Parser\CSA\MoveStatement.cs" />
+    <Compile Include="Shogi\Parser\CSA\NullStatement.cs" />
     <Compile Include="Shogi\Parser\CSA\SetEndTime.cs" />
+    <Compile Include="Shogi\Parser\CSA\SetEvent.cs" />
     <Compile Include="Shogi\Parser\CSA\SetGameName.cs" />
     <Compile Include="Shogi\Parser\CSA\SetOpening.cs" />
+    <Compile Include="Shogi\Parser\CSA\SetPlayer.cs" />
+    <Compile Include="Shogi\Parser\CSA\SetPosition.cs" />
     <Compile Include="Shogi\Parser\CSA\SetPositionBulk.cs" />
     <Compile Include="Shogi\Parser\CSA\SetSite.cs" />
     <Compile Include="Shogi\Parser\CSA\SetStartTime.cs" />
+    <Compile Include="Shogi\Parser\CSA\SetTime.cs" />
+    <Compile Include="Shogi\Parser\CSA\SetTimeLimit.cs" />
     <Compile Include="Shogi\Parser\CSA\SetTurn.cs" />
+    <Compile Include="Shogi\Parser\CSA\SetVersion.cs" />
+    <Compile Include="Shogi\Parser\CSA\SpecialStatement.cs" />
     <Compile Include="Shogi\Pieces\Bishop.cs" />
     <Compile Include="Shogi\Pieces\Gold.cs" />
     <Compile Include="Shogi\Pieces\King.cs" />

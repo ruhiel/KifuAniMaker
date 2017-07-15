@@ -8,7 +8,7 @@ namespace KifuAniMaker.Shogi.Pieces
 {
     public class Bishop : Piece
     {
-        public Bishop(BlackWhite bw) : base(bw)
+        public Bishop(BlackWhite bw, bool promoted = false) : base(bw, promoted)
         {
         }
 

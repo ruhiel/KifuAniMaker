@@ -8,7 +8,7 @@ namespace KifuAniMaker.Shogi.Pieces
 {
     public class King : Piece
     {
-        public King(BlackWhite bw) : base(bw)
+        public King(BlackWhite bw, bool promoted = false) : base(bw, promoted)
         {
         }
 

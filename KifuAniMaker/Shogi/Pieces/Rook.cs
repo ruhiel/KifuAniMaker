@@ -8,7 +8,7 @@ namespace KifuAniMaker.Shogi.Pieces
 {
     public class Rook : Piece
     {
-        public Rook(BlackWhite bw) : base(bw)
+        public Rook(BlackWhite bw, bool promoted = false) : base(bw, promoted)
         {
         }
 

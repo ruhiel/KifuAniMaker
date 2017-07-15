@@ -47,57 +47,59 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var versionParser =
                 from v in Parse.Char('V')
                 from version in Parse.Regex("[0-9.]+")
-                select version;
+                select (ICSAStatement)new SetVersion(version);
 
             // 対局者名
             var playerParser =
                 from n in Parse.Char('N').Token()
                 from bw in blackWhiteParser
                 from player in Parse.Regex(".+").Token()
-                select player;
+                select (ICSAStatement)new SetPlayer(bw.ToBlackWhite(), player);
 
             // 各種棋譜情報
             // 棋戦名
             var gameNameParser =
                 from key in Parse.String(@"$EVENT:").Token()
-                from gameName in Parse.Regex(".+").Token()
-                select gameName;
+                from @event in Parse.Regex(".+").Token()
+                select (ICSAStatement)new SetEvent(@event);
 
              // 対局場所
              var locationParser =
                 from key in Parse.String(@"$SITE:").Token()
-                from location in Parse.Regex(".+").Token()
-                select location;
+                from site in Parse.Regex(".+").Token()
+                select (ICSAStatement)new SetSite(site);
 
             // 対局開始日時
             var gameStartTimeParser =
                 from key in Parse.String(@"$START_TIME:").Token()
                 from datetime in Parse.Regex("[0-9/: ]+").Token()
-                select DateTime.Parse(datetime).ToString();
+                select (ICSAStatement)new SetStartTime(DateTime.Parse(datetime));
 
             // 対局終了日時
             var gameEndTimeParser =
                 from key in Parse.String(@"$END_TIME:").Token()
                 from datetime in Parse.Regex("[0-9/: ]+").Token()
-                select DateTime.Parse(datetime).ToString();
+                select (ICSAStatement)new SetEndTime(DateTime.Parse(datetime));
 
-            // 対局終了日時
+            // 持ち時間
             var remainTimeParser =
                 from key in Parse.String(@"$TIME_LIMIT:").Token()
-                from remainTime in Parse.Regex(@"\d\d:\d\d\+\d\d").Token()
-                select remainTime;
+                from remainTime in Parse.Regex(@"\d\d:\d\d").Token()
+                from plus in Parse.Char('+')
+                from secondTime in Parse.Regex(@"\d\d").Token()
+                select (ICSAStatement)new SetTimeLimit(remainTime, secondTime);
 
             // 戦型
             var openningNameParser =
                 from key in Parse.String(@"$OPENING:").Token()
                 from openingName in Parse.Regex(".+").Token()
-                select openingName;
+                select (ICSAStatement)new SetOpening(openingName);
 
             // 開始局面
             var startingPositionParser =
                 from key in Parse.String("PI").Text()
                 from pieces in pieceWithPositionParser.Many()
-                select key;
+                select (ICSAStatement)new SetPosition(pieces);
 
             // 開始局面(一括)
             var startingPositionBulkParser =
@@ -105,42 +107,49 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from num in Parse.Regex("[0-9]")
                 from pieces in (pieceWithBlackWhite.Or(Parse.Regex("..."))).Repeat(9)
                 from ret in Parse.String("\r\n")
-                select p + num + pieces.Aggregate((x, y) => x + y);
+                select (ICSAStatement)new SetPositionBulk(int.Parse(num), pieces);
 
             // 消費時間
             var timeParser =
                 from t in Parse.Char('T')
                 from time in Parse.Number
-                select time;
+                select (ICSAStatement)new SetTime(int.Parse(time));
 
             // 先後手番
             var blackWhiteTurnParser =
                 from bw in blackWhiteParser
                 from ret in Parse.String("\r\n")
-                select bw == "+" ? "先手" : "後手";
+                select (ICSAStatement)new SetTurn(bw.ToBlackWhite());
 
             // コメント
             var commentParser =
                 from value in Parse.Regex("^'.*").Token()
-                select "COMMENT";
+                select (ICSAStatement)new NullStatement();
 
             // 指し手
             var moveParser =
                 from bw in blackWhiteParser.Token()
-                from prevPosition in Parse.Regex(@"\d\d").Token()
-                from nextPosition in Parse.Regex(@"\d\d").Token()
+                from prevPositionX in Parse.LetterOrDigit
+                from prevPositionY in Parse.LetterOrDigit
+                from nextPositionX in Parse.LetterOrDigit
+                from nextPositionY in Parse.LetterOrDigit
                 from piece in pieceParser.Token()
-                select $"{bw}{prevPosition}{nextPosition}{piece}";
+                select (ICSAStatement)new MoveStatement(bw.ToBlackWhite(),
+                                            int.Parse(prevPositionX.ToString()),
+                                            int.Parse(prevPositionY.ToString()),
+                                            int.Parse(nextPositionX.ToString()),
+                                            int.Parse(nextPositionY.ToString()),
+                                            piece.ToPiece(bw.ToBlackWhite()));
 
             // 特殊な指し手、終局状況
             var specialMoveParser =
                 from p in Parse.Char('%').Token()
                 from key in Parse.Regex(".+").Token()
-                select key;
+                select (ICSAStatement)new SpecialStatement(key);
 
             var nullParser =
                 from value in Parse.Regex(".*").Or(Parse.Return(string.Empty)).Token()
-                select "NULL";
+                select (ICSAStatement)new NullStatement();
 
             var oneStatementParser = versionParser
                                         .Or(playerParser)
@@ -184,7 +193,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             {
                 foreach(var statements in redords)
                 {
-                    foreach(var statement in statements.Where(x => x != "COMMENT" && x != "NULL"))
+                    foreach(var statement in statements)
                     {
                         Console.WriteLine(statement);
                     }

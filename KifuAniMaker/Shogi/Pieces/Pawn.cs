@@ -8,7 +8,7 @@ namespace KifuAniMaker.Shogi.Pieces
 {
     public class Pawn : Piece
     {
-        public Pawn(BlackWhite bw) : base(bw)
+        public Pawn(BlackWhite bw, bool promoted = false) : base(bw, promoted)
         {
         }
 

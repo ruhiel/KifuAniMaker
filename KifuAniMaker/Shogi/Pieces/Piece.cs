@@ -20,9 +20,10 @@ namespace KifuAniMaker.Shogi.Pieces
 
         public void Promote() => Promoted = Promotable;
 
-        public Piece(BlackWhite bw)
+        public Piece(BlackWhite bw, bool promoted = false)
         {
             BW = bw;
+            Promoted = promoted;
         }
     }
 }

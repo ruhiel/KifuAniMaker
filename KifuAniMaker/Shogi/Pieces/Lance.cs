@@ -8,7 +8,7 @@ namespace KifuAniMaker.Shogi.Pieces
 {
     public class Lance : Piece
     {
-        public Lance(BlackWhite bw) : base(bw)
+        public Lance(BlackWhite bw, bool promoted = false) : base(bw, promoted)
         {
         }
 
