@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KifuAniMaker.Shogi.Pieces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,25 +12,16 @@ namespace KifuAniMaker.Shogi.Parser.CSA
     {
         public int Y { get; set; }
 
-        public IEnumerable<string> Pieces { get; set; }
+        public IEnumerable<Piece> Pieces { get; set; }
 
-        public SetPositionBulk(int y, IEnumerable<string> pieces)
+        public SetPositionBulk(int y, IEnumerable<Piece> pieces)
         {
             Y = y;
             Pieces = pieces;
         }
         public Board Execute(Board board)
         {
-            var regex = new Regex(@"(?<bw>\-|\+)(?<piece>..)");
-            for (var i = 0; i < 9; i++)
-            {
-                var match = regex.Match(Pieces.ElementAt(i));
-                if(match.Success)
-                {
-                    var bw = match.Groups["bw"].Value.ToBlackWhite();
-                }
-            }
-            throw new NotImplementedException();
+            return board;
         }
     }
 }

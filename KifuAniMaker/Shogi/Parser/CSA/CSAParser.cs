@@ -12,35 +12,39 @@ namespace KifuAniMaker.Shogi.Parser.CSA
     /// </summary>
     public class CSAParser
     {
+        // 先後手番
+        public static Parser<string> BlackWhiteParser =
+            from bw in Parse.Regex(@"\+|\-")
+            select bw;
+
+        // 駒
+        public static Parser<string> PieceParser =
+            from piece in Parse.Regex("(FU)|(KY)|(KE)|(GI)|(KI)|(KA)|(HI)|(OU)|(TO)|(NY)|(NK)|(NG)|(UM)|(RY)")
+            select piece;
+
         public static void ParseContent(string content)
         {
-            // 先後手番
-            var blackWhiteParser =
-                from bw in Parse.Regex(@"\+|\-")
-                select bw;
 
-            // 駒
-            var pieceParser =
-                from piece in Parse.Regex("(FU)|(KY)|(KE)|(GI)|(KI)|(KA)|(HI)|(OU)|(TO)|(NY)|(NK)|(NG)|(UM)|(RY)")
-                select piece;
+
+
 
             // 位置付き駒
             var pieceWithPositionParser =
                 from postion in Parse.Regex(@"\d{2}")
-                from piece in pieceParser
+                from piece in PieceParser
                 select $"{postion}{piece}";
 
             // 先後付き駒
             var pieceWithBlackWhite =
-                from bw in blackWhiteParser
-                from piece in pieceParser
+                from bw in BlackWhiteParser
+                from piece in PieceParser
                 select $"{bw}{piece}";
 
             // 先後位置付き駒
             var pieceFullParser =
-                from bw in blackWhiteParser
+                from bw in BlackWhiteParser
                 from postion in Parse.Regex(@"\d{2}")
-                from piece in pieceParser
+                from piece in PieceParser
                 select $"{bw}{postion}{piece}";
 
             // バージョン
@@ -52,7 +56,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             // 対局者名
             var playerParser =
                 from n in Parse.Char('N').Token()
-                from bw in blackWhiteParser
+                from bw in BlackWhiteParser
                 from player in Parse.Regex(".+").Token()
                 select (ICSAStatement)new SetPlayer(bw.ToBlackWhite(), player);
 
@@ -109,7 +113,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from num in Parse.Regex("[0-9]")
                 from pieces in (pieceWithBlackWhite.Or(Parse.Regex("..."))).Repeat(9)
                 from ret in Parse.String("\r\n")
-                select (ICSAStatement)new SetPositionBulk(int.Parse(num), pieces);
+                select (ICSAStatement)new SetPositionBulk(int.Parse(num), pieces.Select(x => x.WithBlackWhiteToPiece()));
 
             // 消費時間
             var timeParser =
@@ -119,7 +123,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             // 先後手番
             var blackWhiteTurnParser =
-                from bw in blackWhiteParser
+                from bw in BlackWhiteParser
                 from ret in Parse.String("\r\n")
                 select (ICSAStatement)new SetTurn(bw.ToBlackWhite());
 
@@ -130,12 +134,12 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             // 指し手
             var moveParser =
-                from bw in blackWhiteParser.Token()
+                from bw in BlackWhiteParser.Token()
                 from prevPositionX in Parse.LetterOrDigit
                 from prevPositionY in Parse.LetterOrDigit
                 from nextPositionX in Parse.LetterOrDigit
                 from nextPositionY in Parse.LetterOrDigit
-                from piece in pieceParser.Token()
+                from piece in PieceParser.Token()
                 select (ICSAStatement)new MoveStatement(bw.ToBlackWhite(),
                                             int.Parse(prevPositionX.ToString()),
                                             int.Parse(prevPositionY.ToString()),

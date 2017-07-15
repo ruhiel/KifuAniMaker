@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Sprache;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
@@ -31,6 +30,24 @@ namespace KifuAniMaker.Shogi.Parser.CSA
         {
             var value = _PieceMap[piece];
             return (Piece)Activator.CreateInstance(value.type, bw, value.promoted);
+        }
+
+        public static Piece WithBlackWhiteToPiece(this string piece)
+        {
+            try
+            {
+                // 先後付き駒
+                var pieceWithBlackWhite =
+                    from bw in CSAParser.BlackWhiteParser
+                    from p in CSAParser.PieceParser
+                    select p.ToPiece(bw.ToBlackWhite());
+
+                return pieceWithBlackWhite.Parse(piece);
+            }
+            catch (ParseException)
+            {
+                return null;
+            }
         }
 
         public static BlackWhite ToBlackWhite(this string str)
