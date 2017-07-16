@@ -158,6 +158,7 @@ namespace KifuAniMaker.Shogi
             SubBoard = new Board();
             SubBoard.InitBoard();
         }
+        public bool HasNext => Moves.Any();
 
         public void Next()
         {
@@ -220,15 +221,11 @@ namespace KifuAniMaker.Shogi
                     DrawNum(g, group.Count(), i, BlackWhite.White);
                 }
 
-                /*
-                if (record.Moves[idx].ActionString != "投了")
-                {
-                    g.DrawRectangle(new Pen(Brushes.Red, 2), new Rectangle((int)baseX + (9 - record.Moves[idx].DestPosX) * 60, (int)baseY + (record.Moves[idx].DestPosY - 1) * 64, 60, 64));
-                }
-                */
                 g.DrawString($"{BlackWhite.White.ToSymbol()}{WhitePlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 40);
 
-                foreach (var element in Moves.Take(10).Select((move , index) => new { move, index }))
+                var list = Moved.Any() ? new List<Move>() { Moved.Last() }.Concat(Moves.Take(9)) : Moves.Take(10);
+
+                foreach (var element in list.Select((move , index) => new { move, index }))
                 {
                     g.DrawString(element.move.ToString(), new Font("MS UI Gothic", 24), Brushes.Black, 600, 100 + element.index * 60);
                 }
@@ -238,36 +235,6 @@ namespace KifuAniMaker.Shogi
                 //作成した画像を保存する
                 img.Save(path, ImageFormat.Png);
             }
-            /*
-            var tmp = Path.Combine(Path.GetDirectoryName(path) , Path.GetFileName(path) + ".tmp");
-
-            if (File.Exists(tmp))
-            {
-                File.Delete(tmp);
-            }
-
-            File.Move(path, tmp);
-
-            using (var bmp = new Bitmap(tmp))
-            {
-                var resizeWidth = (int)(bmp.Width * _Rate);
-
-                var resizeHeight = (int)(bmp.Height * _Rate);
-
-                using (var resizeBmp = new Bitmap(resizeWidth, resizeHeight))
-                using (var g = Graphics.FromImage(resizeBmp))
-                {
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(bmp, 0, 0, resizeWidth, resizeHeight);
-
-                    resizeBmp.Save(path, ImageFormat.Png);
-                }
-            }
-
-            File.Delete(tmp);
-
-            return path;
-            */
         }
 
         private void DrawNum(Graphics g, int count, int index, BlackWhite bw)
@@ -346,6 +313,8 @@ namespace KifuAniMaker.Shogi
             var destPosY = move.DestPosY;
             if(move is Resign)
             {
+                Moves.Remove(move);
+                Moved.Add(move);
                 return;
             }
             if (move.IsDrop)
@@ -386,48 +355,6 @@ namespace KifuAniMaker.Shogi
             Next();
         }
 
-        public void MakeAnimation(Options options)
-        {
-            var images = new List<string>();
-
-            //var record = KifParserFactory.Create(options).ReadFile();
-
-            Console.WriteLine("棋譜画像出力中");
-            var sw = new Stopwatch();
-            sw.Start();
-            /*
-            for (var i = 0; i < record.Moves.Count; i++)
-            {
-                Move(record.Moves[i]);
-                //images.Add(Paint(i, record));
-            }*/
-            Console.WriteLine($"棋譜画像出力完了:{sw.Elapsed}");
-            Console.WriteLine("棋譜動画出力中");
-            sw.Restart();
-
-            var outFile = options.OutputFile ?? Path.Combine(Directory.GetCurrentDirectory(), $"{Path.GetFileNameWithoutExtension(options.InputFile)}.mp4");
-
-            var argument = $"-r 1 -i {Path.Combine(Path.GetTempPath(), "result%d.png")} -vcodec libx264 -pix_fmt yuv420p -r 30 -y {outFile}";
-
-            var psInfo = new ProcessStartInfo()
-            {
-                FileName = @"ffmpeg",    // 実行するファイル 
-                Arguments = argument,    // コマンドパラメータ（引数）
-                CreateNoWindow = true,    // コンソール・ウィンドウを開かない
-                UseShellExecute = false,  // シェル機能を使用しない
-            };
-
-            var p = Process.Start(psInfo);
-            p.WaitForExit();
-            Console.WriteLine($"ffmpeg実行結果:{p.ExitCode}");
-
-            foreach (var png in images)
-            {
-                File.Delete(png);
-            }
-            Console.WriteLine($"棋譜動画出力完了:{sw.Elapsed}");
-        }
-
         public IEnumerator<Piece> GetEnumerator()
         {
             for (var i = 0; i < 9; i++)
@@ -440,34 +367,6 @@ namespace KifuAniMaker.Shogi
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        /// <summary>
-        /// 複数の画像をGIFアニメーションとして保存する
-        /// </summary>
-        /// <param name="savePath">保存先のファイルのパス</param>
-        /// <param name="imageFiles">GIFに追加する画像ファイルのパス</param>
-        public void CreateAnimatedGif(string savePath, IEnumerable<string> imageFiles)
-        {
-            //GifBitmapEncoderを作成する
-            var encoder = new GifBitmapEncoder();
-
-            foreach (var f in imageFiles)
-            {
-                //画像ファイルからBitmapFrameを作成する
-                var bmpFrame =
-                    BitmapFrame.Create(new Uri(f, UriKind.RelativeOrAbsolute));
-                //フレームに追加する
-                encoder.Frames.Add(bmpFrame);
-            }
-
-            //書き込むファイルを開く
-            using (var outputFileStrm = new FileStream(savePath,
-                FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                //保存する
-                encoder.Save(outputFileStrm);
-            }
-        }
 
         public override string ToString()
         {

@@ -13,6 +13,6 @@ namespace KifuAniMaker.Shogi.Moves
         {
         }
 
-        public override string ToString() => BlackWhite.ToSymbol() + "投了";
+        public override string ToString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}投了";
     }
 }
