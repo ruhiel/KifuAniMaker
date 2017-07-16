@@ -9,6 +9,8 @@ using System.Diagnostics;
 using KifuAniMaker.Shogi.Pieces;
 using KifuAniMaker.Shogi.Utils;
 using KifuAniMaker.Shogi.Moves;
+using System.Drawing.Imaging;
+
 namespace KifuAniMaker.Shogi
 {
     public class Board : IEnumerable<Piece>
@@ -166,11 +168,8 @@ namespace KifuAniMaker.Shogi
             Turn = Turn.Reverse();
         }
 
-        /*
-        public string Paint(int idx, Record record)
+        public void Paint(string path)
         {
-            var path = Path.Combine(Path.GetTempPath(), $"result{idx.ToString()}.png");
-
             //画像ファイルを読み込んでImageオブジェクトを作成する
             using (var img = new Bitmap(@"img\japanese-chess-b02.png"))
             using (var g = Graphics.FromImage(img))
@@ -221,24 +220,25 @@ namespace KifuAniMaker.Shogi
                     DrawNum(g, group.Count(), i, BlackWhite.White);
                 }
 
+                /*
                 if (record.Moves[idx].ActionString != "投了")
                 {
                     g.DrawRectangle(new Pen(Brushes.Red, 2), new Rectangle((int)baseX + (9 - record.Moves[idx].DestPosX) * 60, (int)baseY + (record.Moves[idx].DestPosY - 1) * 64, 60, 64));
                 }
+                */
+                g.DrawString($"{BlackWhite.White.ToSymbol()}{WhitePlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 40);
 
-                g.DrawString($"▽{record.WhitePlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 40);
-
-                foreach (var element in record.Moves.Skip(idx).Take(10).Select((move , index) => new { move, index }))
+                foreach (var element in Moves.Take(10).Select((move , index) => new { move, index }))
                 {
-                    g.DrawString($"{element.move.MoveNum} {element.move.BlackWhite.ToSymbol()} {element.move.MoveString}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 100 + element.index * 60);
+                    g.DrawString(element.move.ToString(), new Font("MS UI Gothic", 24), Brushes.Black, 600, 100 + element.index * 60);
                 }
 
-                g.DrawString($"▲{record.BlackPlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 700);
-
+                g.DrawString($"{BlackWhite.Black.ToSymbol()}{BlackPlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 700);
+                
                 //作成した画像を保存する
                 img.Save(path, ImageFormat.Png);
             }
-
+            /*
             var tmp = Path.Combine(Path.GetDirectoryName(path) , Path.GetFileName(path) + ".tmp");
 
             if (File.Exists(tmp))
@@ -267,8 +267,8 @@ namespace KifuAniMaker.Shogi
             File.Delete(tmp);
 
             return path;
+            */
         }
-        */
 
         private void DrawNum(Graphics g, int count, int index, BlackWhite bw)
         {

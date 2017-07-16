@@ -17,6 +17,8 @@ namespace KifuAniMaker.Shogi.Pieces
 
         public abstract bool Promotable { get; }
 
+        public abstract string ToJapaneseString { get; }
+
         public bool Promoted { get; set; }
 
         public void Promote() => Promoted = Promotable;

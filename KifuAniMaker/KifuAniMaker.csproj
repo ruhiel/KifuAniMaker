@@ -156,6 +156,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>copy "$(ProjectDir)\kif\*" "$(TargetDir)"</PreBuildEvent>
+    <PreBuildEvent>copy "$(ProjectDir)kif\*" "$(TargetDir)"
+
+xcopy "$(ProjectDir)img" "$(TargetDir)img" /D /S /R /Y /I /K</PreBuildEvent>
   </PropertyGroup>
 </Project>

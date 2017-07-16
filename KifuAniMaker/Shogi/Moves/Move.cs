@@ -1,4 +1,5 @@
 ﻿using KifuAniMaker.Shogi.Pieces;
+using KifuAniMaker.Shogi.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace KifuAniMaker.Shogi.Moves
 
         public void SetTime(int time) => _Time = time;
 
-        public BlackWhite? BlackWhite { get; set; }
+        public BlackWhite BlackWhite { get; set; }
 
         /// <summary>
         /// 駒
@@ -42,9 +43,14 @@ namespace KifuAniMaker.Shogi.Moves
         /// </summary>
         public bool IsSame { get; set; } = false;
 
-        public Move(BlackWhite? bw)
+        public int Number { get; set; }
+
+        public Move(BlackWhite bw, int number)
         {
             BlackWhite = bw;
+            Number = number;
         }
+
+        public override string ToString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}{DestPosX.ToJapaneseStringX()}{DestPosY.ToJapaneseStringY()}{Piece.ToJapaneseString}";
     }
 }

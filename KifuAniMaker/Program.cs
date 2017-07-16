@@ -12,12 +12,14 @@ namespace KifuAniMaker
     {
         static void Main(string[] args)
         {
-            using (var sr = new System.IO.StreamReader(Path.Combine(System.IO.Directory.GetCurrentDirectory(),@"TextFile1.csa"), Encoding.Default))
+            using (var sr = new System.IO.StreamReader(Path.Combine(Directory.GetCurrentDirectory(),@"TextFile1.csa"), Encoding.Default))
             {
                 // ファイルの最後まで読み込む
                 var content = sr.ReadToEnd();
 
-                CSAParser.ParseContent(content);
+                var board = CSAParser.ParseContent(content);
+
+                board.Paint(Path.Combine(Directory.GetCurrentDirectory(), @"test.png"));
             }
         }
     }

@@ -200,8 +200,10 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             from statement in statements
             select statement;
 
+            int i = 0;
             foreach(var s in statementList)
             {
+                i++;
                 board = s.Execute(board);
             }
 

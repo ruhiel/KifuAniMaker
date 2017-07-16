@@ -15,5 +15,7 @@ namespace KifuAniMaker.Shogi.Pieces
         public override string ImageFile => BW == BlackWhite.Black ? (Promoted ? "sgl26.png" : "sgl06.png") : (Promoted ? "sgl56.png" :"sgl36.png");
 
         public override bool Promotable => true;
+
+        public override string ToJapaneseString => Promoted ? "成桂" : "桂";
     }
 }

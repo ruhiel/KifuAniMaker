@@ -1,5 +1,7 @@
 ﻿using KifuAniMaker.Shogi.Moves;
+using KifuAniMaker.Shogi.Utils;
 using System;
+using System.Linq;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
@@ -17,7 +19,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             switch(key)
             {
                 case "TORYO":
-                    board.Moves.Add(new Resign());
+                    var number = board.Moves.Any() ? board.Moves.Count + 1 : 1;
+                    board.Moves.Add(new Resign(board.Moves.Any() ? board.Moves.Last().BlackWhite.Reverse() : BlackWhite.Black, number));
                     break;
                 case "CHUDAN":
                     break;

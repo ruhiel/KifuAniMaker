@@ -52,6 +52,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             return (Piece)Activator.CreateInstance(value.type, bw, value.promoted);
         }
 
+        public static Piece Clone(this Piece piece) => (Piece)Activator.CreateInstance(piece.GetType(), piece.BW, piece.Promoted);
+
         public static string ToCSAString(this BlackWhite bw) => bw == BlackWhite.Black ? "+" : "-";
 
         public static string ToPieceString(this Type t, bool promoted) => _StrMap[(t, promoted)];
@@ -92,19 +94,27 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
         public static void AddMove(this Board board, MoveStatement moveStatement)
         {
-            var move = new Move(board.Moves.Any() ? board.Moves.Last().BlackWhite.Value.Reverse() : BlackWhite.Black);
+            var number = board.Moves.Any() ? board.Moves.Count + 1 : 1;
+            var move = new Move(board.Moves.Any() ? board.Moves.Last().BlackWhite.Reverse() : BlackWhite.Black, number);
 
             move.SrcPosX = moveStatement.PrevPositionX;
             move.SrcPosY = moveStatement.PrevPositionY;
             move.DestPosX = moveStatement.NextPositionX;
             move.DestPosY = moveStatement.NextPositionY;
 
-            move.Piece = moveStatement.Piece;
-
             // 継ぎ盤を使って判定
             move.IsPromote = move.IsDrop ? false : (
                 !board.SubBoard[moveStatement.PrevPositionX, moveStatement.PrevPositionY].Promoted && 
                     moveStatement.Piece.Promoted);
+
+            move.Piece = moveStatement.Piece.Clone();
+
+            if(move.IsPromote)
+            {
+                // CSAの場合、成りの場合すでに成駒になっているので、
+                // 成桂成ると表記されるのを防ぐため戻す
+                move.Piece.Promoted = false;
+            }
 
             move.IsSame = board.Moves.LastOrDefault()?.DestPosX == moveStatement.NextPositionX &&
                                 board.Moves.LastOrDefault()?.DestPosY == moveStatement.NextPositionY;

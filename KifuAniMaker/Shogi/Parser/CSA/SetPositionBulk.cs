@@ -23,8 +23,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             }
             foreach(var item in Pieces.Reverse().Select((piece, idx) => (piece, idx + 1)))
             {
-                board[item.Item2, Y] = item.Item1;
-                board.SubBoard[item.Item2, Y] = item.Item1;
+                board[item.Item2, Y] = item.Item1?.Clone();
+                board.SubBoard[item.Item2, Y] = item.Item1?.Clone();
             }
             return board;
         }
