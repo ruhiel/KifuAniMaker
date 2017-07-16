@@ -102,8 +102,9 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             move.Piece = moveStatement.Piece;
 
             // 継ぎ盤を使って判定
-            move.IsPromote = !board.SubBoard[moveStatement.PrevPositionX, moveStatement.PrevPositionY].Promoted &&
-                                moveStatement.Piece.Promoted;
+            move.IsPromote = move.IsDrop ? false : (
+                !board.SubBoard[moveStatement.PrevPositionX, moveStatement.PrevPositionY].Promoted && 
+                    moveStatement.Piece.Promoted);
 
             move.IsSame = board.Moves.LastOrDefault()?.DestPosX == moveStatement.NextPositionX &&
                                 board.Moves.LastOrDefault()?.DestPosY == moveStatement.NextPositionY;

@@ -23,12 +23,12 @@ namespace KifuAniMaker.Shogi
         /// <summary>
         /// 先手駒台
         /// </summary>
-        private List<Piece> _BlackHands;
+        private List<Piece> _BlackHands = new List<Piece>();
 
         /// <summary>
         /// 後手駒台
         /// </summary>
-        private List<Piece> _WhiteHands;
+        private List<Piece> _WhiteHands = new List<Piece>();
 
         /// <summary>
         /// 駒台
@@ -112,9 +112,6 @@ namespace KifuAniMaker.Shogi
 
         public void InitBoard()
         {
-            _BlackHands = new List<Piece>();
-            _WhiteHands = new List<Piece>();
-
             this[5, 9] = new King(BlackWhite.Black);
             this[5, 1] = new King(BlackWhite.White);
             this[4, 9] = new Gold(BlackWhite.Black);
@@ -475,7 +472,11 @@ namespace KifuAniMaker.Shogi
         public override string ToString()
         {
             var line = "";
-            for(var y = 1; y <= 9; y++)
+
+            line += _WhiteHands.Any() ? (string.Join(" ", _WhiteHands.Select(x => x.ToString()))) : string.Empty;
+            line += "\r\n\r\n";
+
+            for (var y = 1; y <= 9; y++)
             {
                 for (var x = 9; x >= 1; x--)
                 {
@@ -485,6 +486,10 @@ namespace KifuAniMaker.Shogi
 
                 line += "\r\n";
             }
+
+            line += "\r\n\r\n";
+            line += _BlackHands.Any() ? (string.Join(" ", _BlackHands.Select(x => x.ToString()))) : string.Empty;
+
             return line;
         }
     }

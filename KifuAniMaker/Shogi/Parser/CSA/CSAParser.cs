@@ -108,6 +108,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from p in Parse.Char('P')
                 from num in Parse.Regex("[0-9]")
                 from pieces in (pieceWithBlackWhite.Or(Parse.Regex("..."))).Repeat(9)
+                from ret in Parse.String("\r\n")
                 select (ICSAStatement)new SetPositionBulk(int.Parse(num), pieces.Select(x => x.WithBlackWhiteToPiece()));
 
             // 消費時間
