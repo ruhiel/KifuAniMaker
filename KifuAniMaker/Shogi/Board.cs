@@ -230,6 +230,13 @@ namespace KifuAniMaker.Shogi
                     g.DrawString(element.move.ToString(), new Font("MS UI Gothic", 24), Brushes.Black, 600, 100 + element.index * 60);
                 }
 
+                var firstMove = list.First();
+
+                if(Moved.Any() && !(firstMove is Resign))
+                {
+                    g.DrawRectangle(new Pen(Brushes.Blue, 5), baseX + (9-firstMove.DestPosX) * 60, baseY + (firstMove.DestPosY - 1) * 64, 60, 64);
+                }
+
                 g.DrawString($"{BlackWhite.Black.ToSymbol()}{BlackPlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 700);
                 
                 //作成した画像を保存する
