@@ -53,7 +53,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var playerParser =
                 from n in Parse.Char('N').Token()
                 from bw in BlackWhiteParser
-                from player in Parse.Letter.Many().Text()
+                from player in Parse.Regex(@"[^\r\n]+")
                 select (ICSAStatement)new SetPlayer(bw.ToBlackWhite(), player);
 
             // 各種棋譜情報
@@ -200,10 +200,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             from statement in statements
             select statement;
 
-            int i = 0;
             foreach(var s in statementList)
             {
-                i++;
                 board = s.Execute(board);
             }
 

@@ -21,8 +21,10 @@ namespace KifuAniMaker
                 var content = sr.ReadToEnd();
 
                 var board = CSAParser.ParseContent(content);
-
-                foreach(var file in FrameFileEnumrator())
+                Console.WriteLine("棋譜画像出力中");
+                var sw = new Stopwatch();
+                sw.Start();
+                foreach (var file in FrameFileEnumrator())
                 {
                     board.Paint(file);
                     images.Add(file);
@@ -32,43 +34,35 @@ namespace KifuAniMaker
                     }
                     board.Move();
                 }
+                Console.WriteLine($"棋譜画像出力完了:{sw.Elapsed}");
+
+                Console.WriteLine("棋譜動画出力中");
+                sw.Restart();
+
+                var outFile = options.OutputFile ?? Path.Combine(Directory.GetCurrentDirectory(), $"{Path.GetFileNameWithoutExtension(options.InputFile)}.mp4");
+
+                var argument = $"-r 1 -i {Path.Combine(Path.GetTempPath(), "result%03d.png")} -vcodec libx264 -pix_fmt yuv420p -r 30 -y {outFile}";
+
+                var psInfo = new ProcessStartInfo()
+                {
+                    FileName = @"ffmpeg",    // 実行するファイル 
+                    Arguments = argument,    // コマンドパラメータ（引数）
+                    CreateNoWindow = true,    // コンソール・ウィンドウを開かない
+                    UseShellExecute = false,  // シェル機能を使用しない
+                };
+
+                var p = Process.Start(psInfo);
+                p.WaitForExit();
+                Console.WriteLine($"ffmpeg実行結果:{p.ExitCode}");
+
+
+                Console.WriteLine($"棋譜動画出力完了:{sw.Elapsed}");
 
                 foreach (var png in images)
                 {
                     File.Delete(png);
                 }
             }
-
-            /*
-            //var record = KifParserFactory.Create(options).ReadFile();
-
-            Console.WriteLine("棋譜画像出力中");
-            var sw = new Stopwatch();
-            sw.Start();
-
-            Console.WriteLine($"棋譜画像出力完了:{sw.Elapsed}");
-            Console.WriteLine("棋譜動画出力中");
-            sw.Restart();
-
-            var outFile = options.OutputFile ?? Path.Combine(Directory.GetCurrentDirectory(), $"{Path.GetFileNameWithoutExtension(options.InputFile)}.mp4");
-
-            var argument = $"-r 1 -i {Path.Combine(Path.GetTempPath(), "result%d.png")} -vcodec libx264 -pix_fmt yuv420p -r 30 -y {outFile}";
-
-            var psInfo = new ProcessStartInfo()
-            {
-                FileName = @"ffmpeg",    // 実行するファイル 
-                Arguments = argument,    // コマンドパラメータ（引数）
-                CreateNoWindow = true,    // コンソール・ウィンドウを開かない
-                UseShellExecute = false,  // シェル機能を使用しない
-            };
-
-            var p = Process.Start(psInfo);
-            p.WaitForExit();
-            Console.WriteLine($"ffmpeg実行結果:{p.ExitCode}");
-
-
-            Console.WriteLine($"棋譜動画出力完了:{sw.Elapsed}");
-            */
         }
 
         public IEnumerable<string> FrameFileEnumrator()
