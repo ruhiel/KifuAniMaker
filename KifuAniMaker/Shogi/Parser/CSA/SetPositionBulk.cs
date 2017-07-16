@@ -1,10 +1,6 @@
 ﻿using KifuAniMaker.Shogi.Pieces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
@@ -21,6 +17,15 @@ namespace KifuAniMaker.Shogi.Parser.CSA
         }
         public Board Execute(Board board)
         {
+            if(board.SubBoard == null)
+            {
+                board.SubBoard = new Board();
+            }
+            foreach(var item in Pieces.Reverse().Select((piece, idx) => (piece, idx + 1)))
+            {
+                board[item.Item2, Y] = item.Item1;
+                board.SubBoard[item.Item2, Y] = item.Item1;
+            }
             return board;
         }
     }

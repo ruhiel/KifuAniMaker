@@ -14,7 +14,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
         public Board Execute(Board board)
         {
-            board.Moves.LastOrDefault()?.SetTime(_Time);
+            board.Moves?.LastOrDefault()?.SetTime(_Time);
 
             return board;
         }

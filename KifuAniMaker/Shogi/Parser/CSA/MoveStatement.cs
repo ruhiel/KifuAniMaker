@@ -3,27 +3,29 @@ using KifuAniMaker.Shogi.Pieces;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
-    internal class MoveStatement : ICSAStatement
+    public class MoveStatement : ICSAStatement
     {
         private BlackWhite _BlackWhite;
-        private int _PrevPositionX;
-        private int _PrevPositionY;
-        private int _NextPositionX;
-        private int _NextPositionY;
-        private Piece _Piece;
+        public int PrevPositionX { get; set; }
+        public int PrevPositionY { get; set; }
+        public int NextPositionX { get; set; }
+        public int NextPositionY { get; set; }
+        public Piece Piece { get; set; }
 
         public MoveStatement(BlackWhite bw, int prevPositionX, int prevPositionY, int nextPositionX, int nextPositionY, Piece piece)
         {
             _BlackWhite = bw;
-            _PrevPositionX = prevPositionX;
-            _PrevPositionY = prevPositionY;
-            _NextPositionX = nextPositionX;
-            _NextPositionY = nextPositionY;
-            _Piece = piece;
+            PrevPositionX = prevPositionX;
+            PrevPositionY = prevPositionY;
+            NextPositionX = nextPositionX;
+            NextPositionY = nextPositionY;
+            Piece = piece;
         }
 
         public Board Execute(Board board)
         {
+            board.AddMove(this);
+
             return board;
         }
     }

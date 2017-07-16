@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sprache;
+using KifuAniMaker.Shogi.Moves;
+using KifuAniMaker.Shogi.Utils;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
@@ -26,11 +28,33 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             { "RY", (typeof(Rook), true) },
         };
 
+        private static Dictionary<(Type type, bool promoted), string> _StrMap = new Dictionary<(Type type, bool promoted), string>()
+        {
+            { (typeof(Pawn), false), "FU"},
+            { (typeof(Lance), false), "KY"},
+            { (typeof(Knight), false), "KE"},
+            { (typeof(Silver), false), "GI"},
+            { (typeof(Gold), false), "KI"},
+            { (typeof(Bishop), false), "KA"},
+            { (typeof(Rook), false), "HI"},
+            { (typeof(King), false), "OU"},
+            { (typeof(Pawn), true), "TO"},
+            { (typeof(Lance), true), "NY"},
+            { (typeof(Knight), true), "NK"},
+            { (typeof(Silver), true), "NG"},
+            { (typeof(Bishop), true), "UM"},
+            { (typeof(Rook), true), "RY"},
+        };
+
         public static Piece ToPiece(this string piece, BlackWhite bw)
         {
             var value = _PieceMap[piece];
             return (Piece)Activator.CreateInstance(value.type, bw, value.promoted);
         }
+
+        public static string ToCSAString(this BlackWhite bw) => bw == BlackWhite.Black ? "+" : "-";
+
+        public static string ToPieceString(this Type t, bool promoted) => _StrMap[(t, promoted)];
 
         public static Piece WithBlackWhiteToPiece(this string piece)
         {
@@ -64,6 +88,31 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             {
                 throw new ArgumentException(str);
             }
+        }
+
+        public static void AddMove(this Board board, MoveStatement moveStatement)
+        {
+            var move = new Move(board.Moves.Any() ? board.Moves.Last().BlackWhite.Value.Reverse() : BlackWhite.Black);
+
+            move.SrcPosX = moveStatement.PrevPositionX;
+            move.SrcPosY = moveStatement.PrevPositionY;
+            move.DestPosX = moveStatement.NextPositionX;
+            move.DestPosY = moveStatement.NextPositionY;
+
+            move.Piece = moveStatement.Piece;
+
+            // 継ぎ盤を使って判定
+            move.IsPromote = !board.SubBoard[moveStatement.PrevPositionX, moveStatement.PrevPositionY].Promoted &&
+                                moveStatement.Piece.Promoted;
+
+            move.IsSame = board.Moves.LastOrDefault()?.DestPosX == moveStatement.NextPositionX &&
+                                board.Moves.LastOrDefault()?.DestPosY == moveStatement.NextPositionY;
+
+            board.Moves.Add(move);
+
+            // 継ぎ盤更新
+            board.SubBoard.Moves.Add(move);
+            board.SubBoard.Move();
         }
     }
 }

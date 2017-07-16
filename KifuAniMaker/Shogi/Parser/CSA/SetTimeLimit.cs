@@ -21,6 +21,9 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
         public Board Execute(Board board)
         {
+            board.RemainTime = RemainTime;
+            board.SecondTime = SecondTime;
+
             return board;
         }
     }

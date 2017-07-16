@@ -3,15 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Linq;
 using System.Windows.Media.Imaging;
-using System.Drawing.Imaging;
 using System.Diagnostics;
 using KifuAniMaker.Shogi.Pieces;
 using KifuAniMaker.Shogi.Utils;
 using KifuAniMaker.Shogi.Moves;
-
 namespace KifuAniMaker.Shogi
 {
     public class Board : IEnumerable<Piece>
@@ -42,12 +39,12 @@ namespace KifuAniMaker.Shogi
         /// <summary>
         /// 指し手リスト
         /// </summary>
-        public List<Move> Moves { get; set; }
+        public List<Move> Moves { get; set; } = new List<Move>();
 
         /// <summary>
         /// 再生済み指し手リスト
         /// </summary>
-        public List<Move> Moved { get; set; }
+        public List<Move> Moved { get; set; } = new List<Move>();
 
         /// <summary>
         /// 棋戦名
@@ -92,7 +89,17 @@ namespace KifuAniMaker.Shogi
         /// <summary>
         /// 持ち時間
         /// </summary>
-        public int Limit { get; set; }
+        public TimeSpan RemainTime { get; internal set; }
+
+        /// <summary>
+        /// 秒読み
+        /// </summary>
+        public TimeSpan SecondTime { get; internal set; }
+
+        /// <summary>
+        /// 継ぎ盤
+        /// </summary>
+        public Board SubBoard { get; set; }
 
         /// <summary>
         /// コンストラクタ
@@ -148,6 +155,9 @@ namespace KifuAniMaker.Shogi
             this[9, 3] = new Pawn(BlackWhite.White);
             this[9, 7] = new Pawn(BlackWhite.Black);
             this[1, 3] = new Pawn(BlackWhite.White);
+
+            SubBoard = new Board();
+            SubBoard.InitBoard();
         }
 
         public void Next()
@@ -460,6 +470,22 @@ namespace KifuAniMaker.Shogi
                 //保存する
                 encoder.Save(outputFileStrm);
             }
+        }
+
+        public override string ToString()
+        {
+            var line = "";
+            for(var y = 1; y <= 9; y++)
+            {
+                for (var x = 9; x >= 1; x--)
+                {
+                    var p = this[x, y];
+                    line += p?.ToString() ?? " * "; 
+                }
+
+                line += "\r\n";
+            }
+            return line;
         }
     }
 }

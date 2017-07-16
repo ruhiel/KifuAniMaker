@@ -22,12 +22,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             from piece in Parse.Regex("(FU)|(KY)|(KE)|(GI)|(KI)|(KA)|(HI)|(OU)|(TO)|(NY)|(NK)|(NG)|(UM)|(RY)")
             select piece;
 
-        public static void ParseContent(string content)
+        public static Board ParseContent(string content)
         {
-
-
-
-
             // 位置付き駒
             var pieceWithPositionParser =
                 from postion in Parse.Regex(@"\d{2}")
@@ -57,20 +53,20 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var playerParser =
                 from n in Parse.Char('N').Token()
                 from bw in BlackWhiteParser
-                from player in Parse.Regex(".+").Token()
+                from player in Parse.Letter.Many().Text()
                 select (ICSAStatement)new SetPlayer(bw.ToBlackWhite(), player);
 
             // 各種棋譜情報
             // 棋戦名
             var gameNameParser =
                 from key in Parse.String(@"$EVENT:").Token()
-                from @event in Parse.Regex(".+").Token()
+                from @event in Parse.Regex(@"[^\r\n]+")
                 select (ICSAStatement)new SetEvent(@event);
 
              // 対局場所
              var locationParser =
                 from key in Parse.String(@"$SITE:").Token()
-                from site in Parse.Regex(".+").Token()
+                from site in Parse.Regex(@"[^\r\n]+")
                 select (ICSAStatement)new SetSite(site);
 
             // 対局開始日時
@@ -112,7 +108,6 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from p in Parse.Char('P')
                 from num in Parse.Regex("[0-9]")
                 from pieces in (pieceWithBlackWhite.Or(Parse.Regex("..."))).Repeat(9)
-                from ret in Parse.String("\r\n")
                 select (ICSAStatement)new SetPositionBulk(int.Parse(num), pieces.Select(x => x.WithBlackWhiteToPiece()));
 
             // 消費時間
@@ -150,7 +145,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             // 特殊な指し手、終局状況
             var specialMoveParser =
                 from p in Parse.Char('%').Token()
-                from key in Parse.Regex(".+").Token()
+                from key in Parse.Letter.Many().Text()
+                from ret in Parse.String("\r\n").Many()
                 select (ICSAStatement)new SpecialStatement(key);
 
             var nullParser =
@@ -195,16 +191,20 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                  from more in moreRecordParser.Many()
                  select one.Concat(more)).End();      
 
-            foreach (var redords in documentParser.Parse(content))
+            var board = new Board();
+
+            var statementList =
+            from records in documentParser.Parse(content)
+            from statements in records
+            from statement in statements
+            select statement;
+
+            foreach(var s in statementList)
             {
-                foreach(var statements in redords)
-                {
-                    foreach(var statement in statements)
-                    {
-                        Console.WriteLine(statement);
-                    }
-                }
+                board = s.Execute(board);
             }
+
+            return board;
         }
     }
 }

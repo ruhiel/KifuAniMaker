@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KifuAniMaker.Shogi.Parser.CSA;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +26,7 @@ namespace KifuAniMaker.Shogi.Pieces
             BW = bw;
             Promoted = promoted;
         }
+
+        public override string ToString() => BW.ToCSAString() + GetType().ToPieceString(Promoted);
     }
 }

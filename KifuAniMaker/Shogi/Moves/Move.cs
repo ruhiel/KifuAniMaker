@@ -16,9 +16,9 @@ namespace KifuAniMaker.Shogi.Moves
 
         public int DestPosY { get; set; }
 
-        public int Time { get; set; }
+        private int _Time;
 
-        public void SetTime(int time) => Time = time;
+        public void SetTime(int time) => _Time = time;
 
         public BlackWhite? BlackWhite { get; set; }
 
