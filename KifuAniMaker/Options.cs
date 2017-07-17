@@ -10,7 +10,6 @@ namespace KifuAniMaker
 {
     public class Options
     {
-        //String型のオプション
         [Option('o', HelpText = "出力動画ファイルパス")]
         public string OutputFile
         {
@@ -18,7 +17,6 @@ namespace KifuAniMaker
             set;
         }
 
-        //Boolean型のオプション
         [Option('i', Required = true, HelpText = "入力棋譜ファイルパス")]
         public string InputFile
         {
@@ -26,9 +24,36 @@ namespace KifuAniMaker
             set;
         }
 
-        //Boolean型のオプション
-        [Option('f', DefaultValue = "kif", HelpText = "棋譜ファイル形式(csa|kif|ki2)")]
+        [Option('f', DefaultValue = "csa", HelpText = "棋譜ファイル形式(csa|kif|ki2)")]
         public string Format
+        {
+            get;
+            set;
+        }
+
+        [Option('m', DefaultValue = "", HelpText = "ffmpegディレクトリパス")]
+        public string FFmpegPath
+        {
+            get;
+            set;
+        }
+
+        [Option("if", DefaultValue = 1, HelpText = "入力FPS")]
+        public int InputFps
+        {
+            get;
+            set;
+        }
+
+        [Option("of", DefaultValue = 30, HelpText = "入力FPS")]
+        public int OutputFps
+        {
+            get;
+            set;
+        }
+
+        [Option("ffmpegoptions", DefaultValue = "-vcodec libx264 -pix_fmt yuv420p", HelpText = "ffmpegオプション")]
+        public string FFmpegOptions
         {
             get;
             set;
@@ -39,10 +64,10 @@ namespace KifuAniMaker
         public string GetUsage()
         {
             //ヘッダーの設定
-            var head = new HeadingInfo("ConsoleSample", "Version 1.0");
+            var head = new HeadingInfo("KifuAniMaker", "Version 1.0");
             var help = new HelpText(head);
             help.Copyright = new CopyrightInfo("Ruhiel", 2017);
-            help.AddPreOptionsLine("KifGifAniMaker");
+            help.AddPreOptionsLine("KifuAniMaker");
 
             //全オプションを表示(1行間隔)
             help.AdditionalNewLineAfterOption = true;

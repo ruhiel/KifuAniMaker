@@ -16,6 +16,8 @@ namespace KifuAniMaker.Shogi.Utils
 
         public static string ToSymbol(this BlackWhite bw) => bw == BlackWhite.Black ? "☗" : "☖";
 
+        public static string ToAsciiSymbol(this BlackWhite bw) => bw == BlackWhite.Black ? "▲" : "△";
+
         public static string ToJapaneseStringX(this int x) => XStrings[x - 1];
 
         public static string ToJapaneseStringY(this int y) => YStrings[y - 1];

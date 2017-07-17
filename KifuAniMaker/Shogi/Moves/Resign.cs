@@ -14,5 +14,7 @@ namespace KifuAniMaker.Shogi.Moves
         }
 
         public override string ToString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}投了";
+
+        public override string ToAsciiString() => $"{Number.ToString()}{BlackWhite.ToAsciiSymbol()}投了";
     }
 }

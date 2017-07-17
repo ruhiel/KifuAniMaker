@@ -58,5 +58,7 @@ namespace KifuAniMaker.Shogi.Moves
         private string DropString => IsDrop ? "打" : string.Empty;
 
         public override string ToString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}{PosString}{Piece.ToJapaneseString}{PromoteString}{DropString}";
+
+        public virtual string ToAsciiString() => $"{Number.ToString()}{BlackWhite.ToAsciiSymbol()}{PosString}{Piece.ToJapaneseString}{PromoteString}{DropString}";
     }
 }

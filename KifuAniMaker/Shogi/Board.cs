@@ -169,8 +169,9 @@ namespace KifuAniMaker.Shogi
             Turn = Turn.Reverse();
         }
 
-        public void Paint(string path)
+        public Move Paint(string path)
         {
+            Move firstMove;
             //画像ファイルを読み込んでImageオブジェクトを作成する
             using (var img = new Bitmap(@"img\japanese-chess-b02.png"))
             using (var g = Graphics.FromImage(img))
@@ -230,11 +231,11 @@ namespace KifuAniMaker.Shogi
                     g.DrawString(element.move.ToString(), new Font("MS UI Gothic", 24), Brushes.Black, 600, 100 + element.index * 60);
                 }
 
-                var firstMove = list.First();
+                firstMove = list.First();
 
                 if(Moved.Any() && !(firstMove is Resign))
                 {
-                    g.DrawRectangle(new Pen(Brushes.Blue, 5), baseX + (9-firstMove.DestPosX) * 60, baseY + (firstMove.DestPosY - 1) * 64, 60, 64);
+                    g.DrawRectangle(new Pen(Brushes.Red, 5), baseX + (9-firstMove.DestPosX) * 60, baseY + (firstMove.DestPosY - 1) * 64, 60, 64);
                 }
 
                 g.DrawString($"{BlackWhite.Black.ToSymbol()}{BlackPlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 700);
@@ -242,6 +243,7 @@ namespace KifuAniMaker.Shogi
                 //作成した画像を保存する
                 img.Save(path, ImageFormat.Png);
             }
+            return firstMove;
         }
 
         private void DrawNum(Graphics g, int count, int index, BlackWhite bw)
