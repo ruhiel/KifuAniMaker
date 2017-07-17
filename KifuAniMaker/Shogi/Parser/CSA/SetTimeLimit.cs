@@ -26,5 +26,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             return board;
         }
+
+        public override string ToString() => nameof(SetTimeLimit);
     }
 }

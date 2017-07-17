@@ -66,6 +66,7 @@
     <Compile Include="Shogi\Moves\Move.cs" />
     <Compile Include="Shogi\Moves\Resign.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="Shogi\Parser\CSA\CommentStatement.cs" />
     <Compile Include="Shogi\Parser\CSA\CSAParser.cs" />
     <Compile Include="Shogi\Parser\CSA\CSAUtil.cs" />
     <Compile Include="Shogi\Parser\CSA\ICSAStatement.cs" />

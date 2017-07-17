@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
-    public class SetVersion : ICSAStatement
+    public class CommentStatement : ICSAStatement
     {
-        public string Version { get; set; }
-        public SetVersion(string version)
+        private string _Comment;
+        public CommentStatement(string comment)
         {
-            Version = version;
+            _Comment = comment;
         }
 
         public Board Execute(Board board) => board;
 
-        public override string ToString() => nameof(SetVersion);
+        public override string ToString() => nameof(CommentStatement);
     }
 }

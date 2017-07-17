@@ -95,7 +95,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
         public static void AddMove(this Board board, MoveStatement moveStatement)
         {
             var number = board.Moves.Any() ? board.Moves.Count + 1 : 1;
-            var move = new Move(board.Moves.Any() ? board.Moves.Last().BlackWhite.Reverse() : BlackWhite.Black, number);
+            var move = new Move(board.Moves.Any() ? board.Moves.Last().BlackWhite.Reverse() : board.Turn, number);
 
             move.SrcPosX = moveStatement.PrevPositionX;
             move.SrcPosY = moveStatement.PrevPositionY;

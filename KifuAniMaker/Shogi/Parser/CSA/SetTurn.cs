@@ -18,8 +18,11 @@ namespace KifuAniMaker.Shogi.Parser.CSA
         public Board Execute(Board board)
         {
             board.Turn = Turn;
+            board.SubBoard.Turn = Turn;
 
             return board;
         }
+
+        public override string ToString() => nameof(SetTurn);
     }
 }

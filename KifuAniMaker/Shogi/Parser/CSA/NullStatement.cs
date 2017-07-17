@@ -8,6 +8,13 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 {
     public class NullStatement : ICSAStatement
     {
+        private string _Command;
+        public NullStatement(string command)
+        {
+            _Command = command;
+        }
         public Board Execute(Board board) => board;
+
+        public override string ToString() => nameof(NullStatement) + _Command;
     }
 }

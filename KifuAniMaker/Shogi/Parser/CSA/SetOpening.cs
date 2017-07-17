@@ -21,5 +21,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             board.Opening = Opening;
             return board;
         }
+
+        public override string ToString() => nameof(SetOpening);
     }
 }

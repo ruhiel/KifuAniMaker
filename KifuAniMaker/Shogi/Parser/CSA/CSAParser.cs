@@ -26,9 +26,10 @@ namespace KifuAniMaker.Shogi.Parser.CSA
         {
             // 位置付き駒
             var pieceWithPositionParser =
-                from postion in Parse.Regex(@"\d{2}")
+                from postionX in Parse.Digit
+                from postionY in Parse.Digit
                 from piece in PieceParser
-                select $"{postion}{piece}";
+                select (int.Parse(postionX.ToString()), int.Parse(postionY.ToString()), piece);
 
             // 先後付き駒
             var pieceWithBlackWhite =
@@ -54,6 +55,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from n in Parse.Char('N').Token()
                 from bw in BlackWhiteParser
                 from player in Parse.Regex(@"[^\r\n]+")
+                from ret in Parse.String("\r\n")
                 select (ICSAStatement)new SetPlayer(bw.ToBlackWhite(), player);
 
             // 各種棋譜情報
@@ -101,15 +103,16 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var startingPositionParser =
                 from key in Parse.String("PI").Text()
                 from pieces in pieceWithPositionParser.Many()
+                from ret in Parse.String("\r\n")
                 select (ICSAStatement)new SetPosition(pieces);
 
             // 開始局面(一括)
             var startingPositionBulkParser =
                 from p in Parse.Char('P')
-                from num in Parse.Regex("[0-9]")
-                from pieces in (pieceWithBlackWhite.Or(Parse.Regex("..."))).Repeat(9)
+                from num in Parse.Digit
+                from pieces in (pieceWithBlackWhite.Or(Parse.Regex("[^\r\n]{3}"))).Repeat(9)
                 from ret in Parse.String("\r\n")
-                select (ICSAStatement)new SetPositionBulk(int.Parse(num), pieces.Select(x => x.WithBlackWhiteToPiece()));
+                select (ICSAStatement)new SetPositionBulk(int.Parse(num.ToString()), pieces.Select(x => x.WithBlackWhiteToPiece()));
 
             // 消費時間
             var timeParser =
@@ -126,7 +129,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             // コメント
             var commentParser =
                 from value in Parse.Regex("^'.*").Token()
-                select (ICSAStatement)new NullStatement();
+                select (ICSAStatement)new CommentStatement(value);
 
             // 指し手
             var moveParser =
@@ -152,7 +155,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             var nullParser =
                 from value in Parse.Regex(".*").Or(Parse.Return(string.Empty)).Token()
-                select (ICSAStatement)new NullStatement();
+                select (ICSAStatement)new NullStatement(value);
 
             var oneStatementParser = versionParser
                                         .Or(playerParser)
