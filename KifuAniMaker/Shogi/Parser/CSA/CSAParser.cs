@@ -47,7 +47,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             // バージョン
             var versionParser =
                 from v in Parse.Char('V')
-                from version in Parse.Regex("[0-9.]+")
+                from version in Parse.Regex("[0-9.]+").Token()
                 select (ICSAStatement)new SetVersion(version);
 
             // 対局者名
@@ -55,7 +55,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from n in Parse.Char('N').Token()
                 from bw in BlackWhiteParser
                 from player in Parse.Regex(@"[^\r\n]+")
-                from ret in Parse.String("\r\n")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetPlayer(bw.ToBlackWhite(), player);
 
             // 各種棋譜情報
@@ -63,24 +63,28 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var gameNameParser =
                 from key in Parse.String(@"$EVENT:").Token()
                 from @event in Parse.Regex(@"[^\r\n]+")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetEvent(@event);
 
              // 対局場所
              var locationParser =
                 from key in Parse.String(@"$SITE:").Token()
                 from site in Parse.Regex(@"[^\r\n]+")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetSite(site);
 
             // 対局開始日時
             var gameStartTimeParser =
                 from key in Parse.String(@"$START_TIME:").Token()
-                from datetime in Parse.Regex("[0-9/: ]+").Token()
+                from datetime in Parse.Regex("[0-9/: ]+")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetStartTime(DateTime.Parse(datetime));
 
             // 対局終了日時
             var gameEndTimeParser =
                 from key in Parse.String(@"$END_TIME:").Token()
-                from datetime in Parse.Regex("[0-9/: ]+").Token()
+                from datetime in Parse.Regex("[0-9/: ]+")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetEndTime(DateTime.Parse(datetime));
 
             // 持ち時間
@@ -91,19 +95,21 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from remainTimeSecond in Parse.Number
                 from plus in Parse.Char('+')
                 from secondTime in Parse.Number
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetTimeLimit(new TimeSpan(0, int.Parse(remainTimeMinute), int.Parse(remainTimeSecond)), new TimeSpan(0, 0, int.Parse(secondTime)));
 
             // 戦型
             var openningNameParser =
                 from key in Parse.String(@"$OPENING:").Token()
-                from openingName in Parse.Regex(".+").Token()
+                from openingName in Parse.Regex(@"[^\r\n]+")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetOpening(openingName);
 
             // 開始局面
             var startingPositionParser =
                 from key in Parse.String("PI").Text()
                 from pieces in pieceWithPositionParser.Many()
-                from ret in Parse.String("\r\n")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetPosition(pieces);
 
             // 開始局面(一括)
@@ -111,34 +117,37 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from p in Parse.Char('P')
                 from num in Parse.Digit
                 from pieces in (pieceWithBlackWhite.Or(Parse.Regex("[^\r\n]{3}"))).Repeat(9)
-                from ret in Parse.String("\r\n")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetPositionBulk(int.Parse(num.ToString()), pieces.Select(x => x.WithBlackWhiteToPiece()));
 
             // 消費時間
             var timeParser =
                 from t in Parse.Char('T')
                 from time in Parse.Number
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetTime(int.Parse(time));
 
             // 先後手番
             var blackWhiteTurnParser =
                 from bw in BlackWhiteParser
-                from ret in Parse.String("\r\n")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetTurn(bw.ToBlackWhite());
 
             // コメント
             var commentParser =
                 from value in Parse.Regex("^'.*").Token()
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new CommentStatement(value);
 
             // 指し手
             var moveParser =
-                from bw in BlackWhiteParser.Token()
+                from bw in BlackWhiteParser
                 from prevPositionX in Parse.LetterOrDigit
                 from prevPositionY in Parse.LetterOrDigit
                 from nextPositionX in Parse.LetterOrDigit
                 from nextPositionY in Parse.LetterOrDigit
                 from piece in PieceParser.Token()
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new MoveStatement(bw.ToBlackWhite(),
                                             int.Parse(prevPositionX.ToString()),
                                             int.Parse(prevPositionY.ToString()),
@@ -150,7 +159,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var specialMoveParser =
                 from p in Parse.Char('%').Token()
                 from key in Parse.Letter.Many().Text()
-                from ret in Parse.String("\r\n").Many()
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SpecialStatement(key);
 
             var nullParser =
@@ -169,8 +178,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                                         .Or(startingPositionParser)
                                         .Or(timeParser)
                                         .Or(commentParser)
-                                        .Or(blackWhiteTurnParser)
                                         .Or(moveParser)
+                                        .Or(blackWhiteTurnParser)
                                         .Or(specialMoveParser)
                                         .Or(nullParser);
 
