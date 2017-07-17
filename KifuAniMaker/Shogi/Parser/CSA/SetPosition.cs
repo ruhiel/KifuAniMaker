@@ -15,10 +15,16 @@ namespace KifuAniMaker.Shogi.Parser.CSA
         public Board Execute(Board board)
         {
             board.InitBoard();
+            if (board.SubBoard == null)
+            {
+                board.SubBoard = new Board();
+            }
+            board.SubBoard.InitBoard();
 
-            foreach(var piece in _Pieces)
+            foreach (var piece in _Pieces)
             {
                 board[piece.Item1, piece.Item2] = null;
+                board.SubBoard[piece.Item1, piece.Item2] = null;
             }
 
             return board;

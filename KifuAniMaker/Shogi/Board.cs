@@ -154,9 +154,6 @@ namespace KifuAniMaker.Shogi
             this[9, 3] = new Pawn(BlackWhite.White);
             this[9, 7] = new Pawn(BlackWhite.Black);
             this[1, 3] = new Pawn(BlackWhite.White);
-
-            SubBoard = new Board();
-            SubBoard.InitBoard();
         }
         public bool HasNext => Moves.Any();
 
