@@ -22,7 +22,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             from piece in Parse.Regex("(FU)|(KY)|(KE)|(GI)|(KI)|(KA)|(HI)|(OU)|(TO)|(NY)|(NK)|(NG)|(UM)|(RY)")
             select piece;
 
-        public static Board ParseContent(string content)
+        public static List<Board> ParseContent(string content)
         {
             // 位置付き駒
             var pieceWithPositionParser =
@@ -36,13 +36,6 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from bw in BlackWhiteParser
                 from piece in PieceParser
                 select $"{bw}{piece}";
-
-            // 先後位置付き駒
-            var pieceFullParser =
-                from bw in BlackWhiteParser
-                from postion in Parse.Regex(@"\d{2}")
-                from piece in PieceParser
-                select $"{bw}{postion}{piece}";
 
             // バージョン
             var versionParser =
@@ -163,7 +156,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 select (ICSAStatement)new SpecialStatement(key);
 
             var nullParser =
-                from value in Parse.Regex(".*").Or(Parse.Return(string.Empty)).Token()
+                from value in Parse.Regex("^[^/].+").Or(Parse.Return(string.Empty)).Token()
                 select (ICSAStatement)new NullStatement(value);
 
             var oneStatementParser = versionParser
@@ -197,27 +190,34 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             var moreRecordParser = from separtor in Parse.Regex(@"/\r\n")
                              from rec in oneRecordParser
-                                   select rec;
+                             select rec;
 
             var documentParser =
                 (from one in oneRecordParser.Once()
                  from more in moreRecordParser.Many()
-                 select one.Concat(more)).End();      
+                 select one.Concat(more)).End();
 
-            var board = new Board();
+            var boards = new List<Board>();
 
-            var statementList =
-            from records in documentParser.Parse(content)
-            from statements in records
-            from statement in statements
-            select statement;
-
-            foreach(var s in statementList)
+            var documents = 
+                from d in documentParser.Parse(content)
+                select d;
+            foreach(var document in documents)
             {
-                board = s.Execute(board);
+                var board = new Board();
+                var statementList = from statements in document
+                                    from statement in statements
+                                    select statement;
+
+                foreach (var statement in statementList)
+                {
+                    board = statement.Execute(board);
+                }
+
+                boards.Add(board);
             }
 
-            return board;
+            return boards;
         }
     }
 }

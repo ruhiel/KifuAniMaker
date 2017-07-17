@@ -22,7 +22,9 @@ namespace KifuAniMaker
                 // ファイルの最後まで読み込む
                 var content = sr.ReadToEnd();
 
-                var board = CSAParser.ParseContent(content);
+                // TODO:複数対応
+                var boards = CSAParser.ParseContent(content);
+                var board = boards.First();
 
                 var maxTicks = board.Moves.Count;
                 var pbarOptions = new ProgressBarOptions();
