@@ -22,7 +22,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             from piece in Parse.Regex("(FU)|(KY)|(KE)|(GI)|(KI)|(KA)|(HI)|(OU)|(TO)|(NY)|(NK)|(NG)|(UM)|(RY)")
             select piece;
 
-        public static List<Board> ParseContent(string content)
+        private static IEnumerable<IEnumerable<IEnumerable<ICSAStatement>>> ParseDocumentContent(string content)
         {
             // 位置付き駒
             var pieceWithPositionParser =
@@ -59,12 +59,12 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetEvent(@event);
 
-             // 対局場所
-             var locationParser =
-                from key in Parse.String(@"$SITE:").Token()
-                from site in Parse.Regex(@"[^\r\n]+")
-                from ret in Parse.Regex("[\r\n]+").Optional()
-                select (ICSAStatement)new SetSite(site);
+            // 対局場所
+            var locationParser =
+               from key in Parse.String(@"$SITE:").Token()
+               from site in Parse.Regex(@"[^\r\n]+")
+               from ret in Parse.Regex("[\r\n]+").Optional()
+               select (ICSAStatement)new SetSite(site);
 
             // 対局開始日時
             var gameStartTimeParser =
@@ -189,25 +189,36 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var oneRecordParser = statementParser.Many();
 
             var moreRecordParser = from separtor in Parse.Regex(@"/\r\n")
-                             from rec in oneRecordParser
-                             select rec;
+                                   from rec in oneRecordParser
+                                   select rec;
 
             var documentParser =
                 (from one in oneRecordParser.Once()
                  from more in moreRecordParser.Many()
                  select one.Concat(more)).End();
 
-            var boards = new List<Board>();
-
-            var documents = 
+            return
                 from d in documentParser.Parse(content)
                 select d;
-            foreach(var document in documents)
+        }
+
+        private static IEnumerable<IEnumerable<ICSAStatement>> ParseDocument(string content)
+        {
+            foreach (var document in ParseDocumentContent(content))
             {
-                var board = new Board();
-                var statementList = from statements in document
+                yield return 
+                    from statements in document
                                     from statement in statements
                                     select statement;
+            }
+        }
+
+        public static List<Board> ParseContent(string content)
+        {
+            var boards = new List<Board>();
+            foreach(var statementList in ParseDocument(content))
+            {
+                var board = new Board();
 
                 foreach (var statement in statementList)
                 {

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
-    internal class SetTime : ICSAStatement
+    public class SetTime : ICSAStatement
     {
         private int _Time;
 

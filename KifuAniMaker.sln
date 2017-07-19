@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KifuAniMaker", "KifuAniMaker\KifuAniMaker.csproj", "{F6F85B1E-5C6C-413D-ABE2-91C1ED36B6D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KifuAniMakerTest", "KifuAniMakerTest\KifuAniMakerTest.csproj", "{04F120FA-4F54-41B3-90E0-4959DB34CA63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F6F85B1E-5C6C-413D-ABE2-91C1ED36B6D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6F85B1E-5C6C-413D-ABE2-91C1ED36B6D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6F85B1E-5C6C-413D-ABE2-91C1ED36B6D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04F120FA-4F54-41B3-90E0-4959DB34CA63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04F120FA-4F54-41B3-90E0-4959DB34CA63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04F120FA-4F54-41B3-90E0-4959DB34CA63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04F120FA-4F54-41B3-90E0-4959DB34CA63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
