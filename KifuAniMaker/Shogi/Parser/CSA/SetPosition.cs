@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
-    internal class SetPosition : ICSAStatement
+    public class SetPosition : ICSAStatement
     {
         private IEnumerable<(int, int, string)> _Pieces;
 

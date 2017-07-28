@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
-    internal class SpecialStatement : ICSAStatement
+    public class SpecialStatement : ICSAStatement
     {
         private string key;
 
