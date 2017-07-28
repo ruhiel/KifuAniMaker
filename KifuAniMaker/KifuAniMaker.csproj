@@ -74,11 +74,11 @@
     <Compile Include="Shogi\Parser\CSA\NullStatement.cs" />
     <Compile Include="Shogi\Parser\CSA\SetEndTime.cs" />
     <Compile Include="Shogi\Parser\CSA\SetEvent.cs" />
-    <Compile Include="Shogi\Parser\CSA\SetGameName.cs" />
     <Compile Include="Shogi\Parser\CSA\SetOpening.cs" />
     <Compile Include="Shogi\Parser\CSA\SetPlayer.cs" />
     <Compile Include="Shogi\Parser\CSA\SetPosition.cs" />
     <Compile Include="Shogi\Parser\CSA\SetPositionBulk.cs" />
+    <Compile Include="Shogi\Parser\CSA\SetPositionPiece.cs" />
     <Compile Include="Shogi\Parser\CSA\SetSite.cs" />
     <Compile Include="Shogi\Parser\CSA\SetStartTime.cs" />
     <Compile Include="Shogi\Parser\CSA\SetTime.cs" />

@@ -98,7 +98,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetOpening(openingName);
 
-            // 開始局面
+            // 開始局面(平手初期配置と駒落ち)
             var startingPositionParser =
                 from key in Parse.String("PI").Text()
                 from pieces in pieceWithPositionParser.Many()
@@ -112,6 +112,14 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from pieces in (pieceWithBlackWhite.Or(Parse.Regex("[^\r\n]{3}"))).Repeat(9)
                 from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new SetPositionBulk(int.Parse(num.ToString()), pieces.Select(x => x.WithBlackWhiteToPiece()));
+
+            // 駒別単独表現
+            var startingPositionPieceParser =
+                from p in Parse.Char('P')
+                from bw in BlackWhiteParser
+                from pieces in pieceWithPositionParser.AtLeastOnce()
+                from ret in Parse.Regex("[\r\n]+").Optional()
+                select (ICSAStatement)new SetPositionPiece();
 
             // 消費時間
             var timeParser =
@@ -128,8 +136,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             // コメント
             var commentParser =
-                from value in Parse.Regex("^'.*").Token()
-                from ret in Parse.Regex("[\r\n]+").Optional()
+                from value in Parse.Regex("^'.+").Token()
                 select (ICSAStatement)new CommentStatement(value);
 
             // 指し手
@@ -139,7 +146,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from prevPositionY in Parse.LetterOrDigit
                 from nextPositionX in Parse.LetterOrDigit
                 from nextPositionY in Parse.LetterOrDigit
-                from piece in PieceParser.Token()
+                from piece in PieceParser
                 from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new MoveStatement(bw.ToBlackWhite(),
                                             int.Parse(prevPositionX.ToString()),
@@ -156,7 +163,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 select (ICSAStatement)new SpecialStatement(key);
 
             var nullParser =
-                from value in Parse.Regex("^[^/].+").Or(Parse.Return(string.Empty)).Token()
+                from value in Parse.Regex(".+")
+                from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new NullStatement(value);
 
             var oneStatementParser = versionParser
@@ -168,6 +176,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                                         .Or(remainTimeParser)
                                         .Or(openningNameParser)
                                         .Or(startingPositionBulkParser)
+                                        .Or(startingPositionPieceParser)
                                         .Or(startingPositionParser)
                                         .Or(timeParser)
                                         .Or(commentParser)
@@ -206,10 +215,11 @@ namespace KifuAniMaker.Shogi.Parser.CSA
         {
             foreach (var document in ParseDocumentContent(content))
             {
-                yield return 
+                yield return
                     from statements in document
-                                    from statement in statements
-                                    select statement;
+                    from statement in statements
+                    where !(statement is NullStatement)
+                    select statement;
             }
         }
 
