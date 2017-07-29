@@ -163,7 +163,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 select (ICSAStatement)new SpecialStatement(key);
 
             var nullParser =
-                from value in Parse.Regex(".+")
+                from value in Parse.Regex("^[^/].+")
                 from ret in Parse.Regex("[\r\n]+").Optional()
                 select (ICSAStatement)new NullStatement(value);
 
@@ -197,7 +197,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             var oneRecordParser = statementParser.Many();
 
-            var moreRecordParser = from separtor in Parse.Regex(@"/\r\n")
+            var moreRecordParser = from separtor in Parse.Char('/').Token()
                                    from rec in oneRecordParser
                                    select rec;
 
