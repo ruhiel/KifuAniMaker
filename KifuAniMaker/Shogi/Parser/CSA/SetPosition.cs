@@ -23,8 +23,8 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
             foreach (var piece in _Pieces)
             {
-                board[piece.Item1, piece.Item2] = null;
-                board.SubBoard[piece.Item1, piece.Item2] = null;
+                board.MoveToPieceBox(piece.Item1, piece.Item2);
+                board.SubBoard.MoveToPieceBox(piece.Item1, piece.Item2);
             }
 
             return board;

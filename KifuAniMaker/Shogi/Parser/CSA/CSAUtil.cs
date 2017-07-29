@@ -53,6 +53,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var value = _PieceMap[piece];
             return (Piece)Activator.CreateInstance(value.type, bw, value.promoted);
         }
+        public static Type ToPieceType(this string piece) => _PieceMap[piece].type;
 
         public static Piece Clone(this Piece piece) => (Piece)Activator.CreateInstance(piece.GetType(), piece.BW, piece.Promoted);
 

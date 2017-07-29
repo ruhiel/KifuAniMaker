@@ -119,7 +119,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                 from bw in BlackWhiteParser
                 from pieces in pieceWithPositionParser.AtLeastOnce()
                 from ret in Parse.Regex("[\r\n]+").Optional()
-                select (ICSAStatement)new SetPositionPiece();
+                select (ICSAStatement)new SetPositionPiece(bw.ToBlackWhite(), pieces);
 
             // 消費時間
             var timeParser =

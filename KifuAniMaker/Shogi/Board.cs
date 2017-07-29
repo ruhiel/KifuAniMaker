@@ -36,7 +36,14 @@ namespace KifuAniMaker.Shogi
         /// 駒台
         /// </summary>
         /// <returns></returns>
-        private List<Piece> GetHands() => Turn == BlackWhite.Black ? _BlackHands : _WhiteHands;
+        private List<Piece> GetHands() => GetHands(Turn);
+
+        /// <summary>
+        /// 駒台
+        /// </summary>
+        /// <param name="bw"></param>
+        /// <returns></returns>
+        public List<Piece> GetHands(BlackWhite bw) => bw == BlackWhite.Black ? _BlackHands : _WhiteHands;
 
         /// <summary>
         /// 指し手リスト
@@ -158,6 +165,33 @@ namespace KifuAniMaker.Shogi
                 new Pawn(BlackWhite.Black),
                 new Pawn(BlackWhite.White),
             };
+        }
+
+        public void MoveToPieceBox(int x, int y)
+        {
+            var piece = this[x, y];
+
+            this[x, y] = null;
+
+            if(piece != null)
+            {
+                PieceBox.Add(piece);
+            }
+        }
+
+        public void MoveToHandsFromPieceBox(Type t, BlackWhite bw)
+        {
+            var piece = PieceBox.First(a => a.GetType() == t);
+            PieceBox.Remove(piece);
+            piece.BW = bw;
+            GetHands(bw).Add(piece);
+        }
+
+        public void MoveAllToHandsFromPieceBox(BlackWhite bw)
+        {
+            GetHands(bw).AddRange(PieceBox);
+
+            PieceBox.Clear();
         }
 
         public void SetFromPieceBox(int x, int y, Type t, BlackWhite bw)
@@ -376,6 +410,13 @@ namespace KifuAniMaker.Shogi
             GetHands().Remove(piece);
         }
 
+        private void CapturesPiece(Piece piece)
+        {
+            piece.Reverse();
+            piece.Promoted = false;
+            GetHands().Add(piece);
+        }
+
         private void MovePiece(Move move)
         {
             this[move.DestPosX, move.DestPosY] = this[move.SrcPosX.Value, move.SrcPosY.Value];
@@ -411,9 +452,7 @@ namespace KifuAniMaker.Shogi
                 if(piece != null)
                 {
                     // 駒取り
-                    piece.Reverse();
-                    piece.Promoted = false;
-                    GetHands().Add(piece);
+                    CapturesPiece(piece);
                 }
 
                 MovePiece(move);
