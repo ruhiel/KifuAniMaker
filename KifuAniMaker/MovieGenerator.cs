@@ -31,10 +31,13 @@ namespace KifuAniMaker
                 pbarOptions.BackgroundColor = ConsoleColor.Cyan;
                 pbarOptions.ProgressCharacter = '*';
                 pbarOptions.DisplayTimeInRealTime = true;
+                var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                Directory.CreateDirectory(tempDir);
+
                 Console.WriteLine($"棋譜画像出力中");
                 using (var pbar = new ProgressBar(maxTicks, "棋譜画像出力中", pbarOptions))
                 {
-                    foreach (var file in FrameFileEnumerator())
+                    foreach (var file in FrameFileEnumerator(tempDir))
                     {
                         var move = board.Paint(file);
                         images.Add(file);
@@ -53,9 +56,10 @@ namespace KifuAniMaker
 
                 var outFile = options.OutputFile ?? Path.Combine(Path.GetDirectoryName(options.InputFile), $"{Path.GetFileNameWithoutExtension(options.InputFile)}.mp4");
 
-                var argument = $"-r {options.InputFps} -i {Path.Combine(Path.GetTempPath(), "result%03d.png")} {options.FFmpegOptions} -r {options.OutputFps} -y {outFile}";
+                var argument = $"-r {options.InputFps} -i {Path.Combine(tempDir, "result%03d.png")} {options.FFmpegOptions} -r {options.OutputFps} -y {outFile}";
 
                 var ffmpeg = Path.Combine(options.FFmpegPath, "ffmpeg");
+
                 var psInfo = new ProcessStartInfo()
                 {
                     FileName = ffmpeg,    // 実行するファイル 
@@ -78,17 +82,19 @@ namespace KifuAniMaker
                     File.Delete(png);
                 }
 
+                Directory.Delete(tempDir);
+
                 Console.WriteLine("続行するには何かキーを押してください . . .");
                 Console.ReadKey();
             }
         }
 
-        public IEnumerable<string> FrameFileEnumerator()
+        public IEnumerable<string> FrameFileEnumerator(string dir)
         {
             uint index = 0;
             while (true)
             {
-                yield return Path.Combine(Path.GetTempPath(), $"result{index:D3}.png");
+                yield return Path.Combine(dir, $"result{index:D3}.png");
                 index++;
             }
         }
