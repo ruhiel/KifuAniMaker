@@ -4,6 +4,7 @@ using KifuAniMaker.Shogi.Parser.CSA;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using KifuAniMaker.Shogi;
 
 namespace KifuAniMakerTest
 {
@@ -14,13 +15,8 @@ namespace KifuAniMakerTest
         [TestMethod]
         public void TestMethod1()
         {
-            var line = $"T10{NL}T12{NL}T11";
-
-            var result = (IEnumerable<IEnumerable<ICSAStatement>>)typeof(CSAParser).InvokeMember("ParseDocument", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { line });
-
-            Assert.IsTrue(result.Any());
-
-            Assert.IsTrue(result.First().All(x => x is SetTime));
+            var board = new Board();
+            board.InitBoard();
         }
 
         [TestMethod]

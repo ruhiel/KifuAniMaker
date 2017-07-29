@@ -21,10 +21,10 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             {
                 board.SubBoard = new Board();
             }
-            foreach(var item in Pieces.Reverse().Select((piece, idx) => (piece, idx + 1)))
+            foreach(var item in Pieces.Reverse().Select((piece, idx) => (piece, idx + 1)).Where(x => x.Item1 != null))
             {
-                board[item.Item2, Y] = item.Item1?.Clone();
-                board.SubBoard[item.Item2, Y] = item.Item1?.Clone();
+                board.SetFromPieceBox(item.Item2, Y, item.Item1.GetType(), item.Item1.BW);
+                board.SubBoard.SetFromPieceBox(item.Item2, Y, item.Item1.GetType(), item.Item1.BW);
             }
             return board;
         }

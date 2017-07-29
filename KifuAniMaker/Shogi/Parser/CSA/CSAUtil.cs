@@ -26,6 +26,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             { "NG", (typeof(Silver), true) },
             { "UM", (typeof(Bishop), true) },
             { "RY", (typeof(Rook), true) },
+            { "AL", (typeof(All), false) },
         };
 
         private static Dictionary<(Type type, bool promoted), string> _StrMap = new Dictionary<(Type type, bool promoted), string>()
@@ -44,6 +45,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             { (typeof(Silver), true), "NG"},
             { (typeof(Bishop), true), "UM"},
             { (typeof(Rook), true), "RY"},
+            { (typeof(All), false), "AL"},
         };
 
         public static Piece ToPiece(this string piece, BlackWhite bw)

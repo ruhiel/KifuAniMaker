@@ -19,7 +19,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
 
         // 駒
         public static Parser<string> PieceParser =
-            from piece in Parse.Regex("(FU)|(KY)|(KE)|(GI)|(KI)|(KA)|(HI)|(OU)|(TO)|(NY)|(NK)|(NG)|(UM)|(RY)")
+            from piece in Parse.Regex("(FU)|(KY)|(KE)|(GI)|(KI)|(KA)|(HI)|(OU)|(TO)|(NY)|(NK)|(NG)|(UM)|(RY)|(AL)")
             select piece;
 
         private static IEnumerable<IEnumerable<IEnumerable<ICSAStatement>>> ParseDocumentContent(string content)

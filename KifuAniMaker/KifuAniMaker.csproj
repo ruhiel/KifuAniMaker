@@ -86,6 +86,7 @@
     <Compile Include="Shogi\Parser\CSA\SetTurn.cs" />
     <Compile Include="Shogi\Parser\CSA\SetVersion.cs" />
     <Compile Include="Shogi\Parser\CSA\SpecialStatement.cs" />
+    <Compile Include="Shogi\Pieces\All.cs" />
     <Compile Include="Shogi\Pieces\Bishop.cs" />
     <Compile Include="Shogi\Pieces\Gold.cs" />
     <Compile Include="Shogi\Pieces\King.cs" />

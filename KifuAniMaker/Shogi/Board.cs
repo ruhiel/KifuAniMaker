@@ -104,57 +104,114 @@ namespace KifuAniMaker.Shogi
         public Board SubBoard { get; set; }
 
         /// <summary>
+        /// 駒箱
+        /// </summary>
+        public List<Piece> PieceBox { get; set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public Board()
         {
             _Pieces = new Piece[9, 9];
             Turn = BlackWhite.Black;
+            PieceBox = new List<Piece>()
+            {
+                new King(BlackWhite.Black),
+                new King(BlackWhite.White),
+                new Gold(BlackWhite.Black),
+                new Gold(BlackWhite.White),
+                new Gold(BlackWhite.Black),
+                new Gold(BlackWhite.White),
+                new Silver(BlackWhite.Black),
+                new Silver(BlackWhite.White),
+                new Silver(BlackWhite.Black),
+                new Silver(BlackWhite.White),
+                new Knight(BlackWhite.Black),
+                new Knight(BlackWhite.White),
+                new Knight(BlackWhite.Black),
+                new Knight(BlackWhite.White),
+                new Lance(BlackWhite.Black),
+                new Lance(BlackWhite.White),
+                new Lance(BlackWhite.Black),
+                new Lance(BlackWhite.White),
+                new Rook(BlackWhite.Black),
+                new Rook(BlackWhite.White),
+                new Bishop(BlackWhite.Black),
+                new Bishop(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+                new Pawn(BlackWhite.Black),
+                new Pawn(BlackWhite.White),
+            };
+        }
+
+        public void SetFromPieceBox(int x, int y, Type t, BlackWhite bw)
+        {
+            var piece = PieceBox.First(a => a.GetType() == t);
+            PieceBox.Remove(piece);
+            piece.BW = bw;
+            this[x, y] = piece;
         }
 
         public void InitBoard()
         {
-            this[5, 9] = new King(BlackWhite.Black);
-            this[5, 1] = new King(BlackWhite.White);
-            this[4, 9] = new Gold(BlackWhite.Black);
-            this[6, 1] = new Gold(BlackWhite.White);
-            this[6, 9] = new Gold(BlackWhite.Black);
-            this[4, 1] = new Gold(BlackWhite.White);
-            this[3, 9] = new Silver(BlackWhite.Black);
-            this[7, 1] = new Silver(BlackWhite.White);
-            this[7, 9] = new Silver(BlackWhite.Black);
-            this[3, 1] = new Silver(BlackWhite.White);
-            this[2, 9] = new Knight(BlackWhite.Black);
-            this[8, 1] = new Knight(BlackWhite.White);
-            this[8, 9] = new Knight(BlackWhite.Black);
-            this[2, 1] = new Knight(BlackWhite.White);
-            this[1, 9] = new Lance(BlackWhite.Black);
-            this[9, 1] = new Lance(BlackWhite.White);
-            this[9, 9] = new Lance(BlackWhite.Black);
-            this[1, 1] = new Lance(BlackWhite.White);
-            this[2, 8] = new Rook(BlackWhite.Black);
-            this[8, 2] = new Rook(BlackWhite.White);
-            this[8, 8] = new Bishop(BlackWhite.Black);
-            this[2, 2] = new Bishop(BlackWhite.White);
-            this[5, 7] = new Pawn(BlackWhite.Black);
-            this[5, 3] = new Pawn(BlackWhite.White);
-            this[4, 7] = new Pawn(BlackWhite.Black);
-            this[6, 3] = new Pawn(BlackWhite.White);
-            this[6, 7] = new Pawn(BlackWhite.Black);
-            this[4, 3] = new Pawn(BlackWhite.White);
-            this[3, 7] = new Pawn(BlackWhite.Black);
-            this[7, 3] = new Pawn(BlackWhite.White);
-            this[7, 7] = new Pawn(BlackWhite.Black);
-            this[3, 3] = new Pawn(BlackWhite.White);
-            this[2, 7] = new Pawn(BlackWhite.Black);
-            this[8, 3] = new Pawn(BlackWhite.White);
-            this[8, 7] = new Pawn(BlackWhite.Black);
-            this[2, 3] = new Pawn(BlackWhite.White);
-            this[1, 7] = new Pawn(BlackWhite.Black);
-            this[9, 3] = new Pawn(BlackWhite.White);
-            this[9, 7] = new Pawn(BlackWhite.Black);
-            this[1, 3] = new Pawn(BlackWhite.White);
+            SetFromPieceBox(5, 9, typeof(King), BlackWhite.Black);
+            SetFromPieceBox(5, 1, typeof(King), BlackWhite.White);
+            SetFromPieceBox(4, 9, typeof(Gold), BlackWhite.Black);
+            SetFromPieceBox(6, 1, typeof(Gold), BlackWhite.White);
+            SetFromPieceBox(6, 9, typeof(Gold), BlackWhite.Black);
+            SetFromPieceBox(4, 1, typeof(Gold), BlackWhite.White);
+            SetFromPieceBox(3, 9, typeof(Silver), BlackWhite.Black);
+            SetFromPieceBox(7, 1, typeof(Silver), BlackWhite.White);
+            SetFromPieceBox(7, 9, typeof(Silver), BlackWhite.Black);
+            SetFromPieceBox(3, 1, typeof(Silver), BlackWhite.White);
+            SetFromPieceBox(2, 9, typeof(Knight), BlackWhite.Black);
+            SetFromPieceBox(8, 1, typeof(Knight), BlackWhite.White);
+            SetFromPieceBox(8, 9, typeof(Knight), BlackWhite.Black);
+            SetFromPieceBox(2, 1, typeof(Knight), BlackWhite.White);
+            SetFromPieceBox(1, 9, typeof(Lance), BlackWhite.Black);
+            SetFromPieceBox(9, 1, typeof(Lance), BlackWhite.White);
+            SetFromPieceBox(9, 9, typeof(Lance), BlackWhite.Black);
+            SetFromPieceBox(1, 1, typeof(Lance), BlackWhite.White);
+            SetFromPieceBox(2, 8, typeof(Rook), BlackWhite.Black);
+            SetFromPieceBox(8, 2, typeof(Rook), BlackWhite.White);
+            SetFromPieceBox(8, 8, typeof(Bishop), BlackWhite.Black);
+            SetFromPieceBox(2, 2, typeof(Bishop), BlackWhite.White);
+            SetFromPieceBox(5, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(5, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(4, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(6, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(6, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(4, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(3, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(7, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(7, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(3, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(2, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(8, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(8, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(2, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(1, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(9, 3, typeof(Pawn), BlackWhite.White);
+            SetFromPieceBox(9, 7, typeof(Pawn), BlackWhite.Black);
+            SetFromPieceBox(1, 3, typeof(Pawn), BlackWhite.White);
         }
+
         public bool HasNext => Moves.Any();
 
         public void Next()
@@ -312,6 +369,20 @@ namespace KifuAniMaker.Shogi
             }
         }
 
+        private void Drop(Move move)
+        {
+            var piece = GetHands().First(x => x.GetType() == move.Piece.GetType());
+            this[move.DestPosX, move.DestPosY] = piece;
+            GetHands().Remove(piece);
+        }
+
+        private void MovePiece(Move move)
+        {
+            this[move.DestPosX, move.DestPosY] = this[move.SrcPosX.Value, move.SrcPosY.Value];
+
+            this[move.SrcPosX.Value, move.SrcPosY.Value] = null;
+        }
+
         public void Move()
         {
             var move = Moves.First();
@@ -325,9 +396,7 @@ namespace KifuAniMaker.Shogi
             }
             if (move.IsDrop)
             {
-                var piece = GetHands().First(x => x.GetType() == move.Piece.GetType());
-                this[destPosX, destPosY] = piece;
-                GetHands().Remove(piece);
+                Drop(move);
             }
             else
             {
@@ -347,15 +416,13 @@ namespace KifuAniMaker.Shogi
                     GetHands().Add(piece);
                 }
 
-                this[destPosX, destPosY] = this[move.SrcPosX.Value, move.SrcPosY.Value];
+                MovePiece(move);
 
                 if (move.IsPromote)
                 {
                     // 成
                     this[destPosX, destPosY].Promote();
                 }
-
-                this[move.SrcPosX.Value, move.SrcPosY.Value] = null;
             }
 
             Next();
