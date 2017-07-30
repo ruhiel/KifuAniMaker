@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using KifuAniMaker.Shogi;
+using KifuAniMaker.Shogi.Pieces;
 
 namespace KifuAniMakerTest
 {
@@ -16,11 +17,32 @@ namespace KifuAniMakerTest
         public void TestMethod1()
         {
             var board = new Board();
-            board.InitBoard();
+
+            var str = $"P-22KA{NL}P+99KY89KE{NL}P+00KI00FU{NL}P-00AL";
+            var enumerable = (IEnumerable<IEnumerable<ICSAStatement>>)typeof(CSAParser).InvokeMember("ParseDocument", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { str });
+
+            Assert.IsTrue(enumerable.Any());
+
+            var result = enumerable.First();
+
+            foreach(var rec in result)
+            {
+                board = rec.Execute(board);
+            }
+
+            Assert.IsTrue(board[2, 2] is Bishop);
+            Assert.AreEqual(board[2, 2].BW, BlackWhite.White);
+            Assert.IsTrue(board[9, 9] is Lance);
+            Assert.AreEqual(board[9, 9].BW, BlackWhite.Black);
+            Assert.IsTrue(board[8, 9] is Knight);
+            Assert.AreEqual(board[8, 9].BW, BlackWhite.Black);
+            Assert.IsTrue(board.GetHands(BlackWhite.Black).Any(x => x is Gold));
+            Assert.IsTrue(board.GetHands(BlackWhite.Black).Any(x => x is Pawn));
+            Assert.AreEqual(board.GetHands(BlackWhite.White).Count, 35);
         }
 
         [TestMethod]
-        public void MyTestMethod()
+        public void TestMethod2()
         {
             var statementTypes = new[]
             {

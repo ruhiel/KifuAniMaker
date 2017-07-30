@@ -485,8 +485,9 @@ namespace KifuAniMaker.Shogi
             var line = "";
 
             line += _WhiteHands.Any() ? (string.Join(" ", _WhiteHands.Select(x => x.ToString()))) : string.Empty;
-            line += "\r\n\r\n";
+            line += $"{Environment.NewLine}{Environment.NewLine}";
 
+            line += $" 9  8  7  6  5  4  3  2  1 {Environment.NewLine}";
             for (var y = 1; y <= 9; y++)
             {
                 for (var x = 9; x >= 1; x--)
@@ -495,10 +496,10 @@ namespace KifuAniMaker.Shogi
                     line += p?.ToString() ?? " * "; 
                 }
 
-                line += "\r\n";
+                line += $" {y}{Environment.NewLine}";
             }
 
-            line += "\r\n\r\n";
+            line += $"{Environment.NewLine}{Environment.NewLine}";
             line += _BlackHands.Any() ? (string.Join(" ", _BlackHands.Select(x => x.ToString()))) : string.Empty;
 
             return line;
