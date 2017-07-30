@@ -1,5 +1,7 @@
-﻿using KifuAniMaker.Shogi.Parser.CSA;
+﻿using KifuAniMaker.Shogi;
+using KifuAniMaker.Shogi.Parser.CSA;
 using ShellProgressBar;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,78 +16,119 @@ namespace KifuAniMaker
     {
         public void MakeAnimation(Options options)
         {
-            using (var sr = new StreamReader(options.InputFile, Encoding.Default))
+            string content;
+            Console.WriteLine($"入力棋譜ファイル:{options.InputFile}");
+            try
             {
-                Console.WriteLine($"入力棋譜ファイル:{options.InputFile}");
-                var images = new List<string>();
+                content = ReadFile(options.InputFile);
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"棋譜ファイルの読み込みに失敗しました。{e.Message}");
+                return;
+            }
 
-                // ファイルの最後まで読み込む
-                var content = sr.ReadToEnd();
+            List<Board> boards;
 
-                // TODO:複数対応
-                var boards = CSAParser.ParseContent(content);
-                var board = boards.First();
+            try
+            {
+                boards = CSAParser.ParseContent(content);
 
-                var maxTicks = board.Moves.Count;
-                var pbarOptions = new ProgressBarOptions();
-                pbarOptions.BackgroundColor = ConsoleColor.Cyan;
-                pbarOptions.ProgressCharacter = '*';
-                pbarOptions.DisplayTimeInRealTime = true;
-                var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                Directory.CreateDirectory(tempDir);
-
-                Console.WriteLine($"棋譜画像出力中");
-                using (var pbar = new ProgressBar(maxTicks, "棋譜画像出力中", pbarOptions))
+                if(!boards.Any())
                 {
-                    foreach (var file in FrameFileEnumerator(tempDir))
+                    Console.WriteLine($"棋譜ファイル内に棋譜が存在しませんでした。");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"棋譜ファイルの解析に失敗しました。{e.Message}");
+                return;
+            }
+
+            // TODO:複数対応
+            var board = boards.First();
+
+            var maxTicks = board.Moves.Count;
+            var pbarOptions = new ProgressBarOptions();
+            pbarOptions.BackgroundColor = ConsoleColor.Cyan;
+            pbarOptions.ProgressCharacter = '*';
+            pbarOptions.DisplayTimeInRealTime = true;
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempDir);
+
+            Console.WriteLine($"棋譜画像出力中");
+
+            var images = new List<string>();
+
+            using (var pbar = new ProgressBar(maxTicks, "棋譜画像出力中", pbarOptions))
+            {
+                foreach (var file in FrameFileEnumerator(tempDir))
+                {
+                    var move = board.Paint(file);
+                    images.Add(file);
+                    pbar.Tick($"{move.ToAsciiString()}");
+                    if (!board.HasNext)
                     {
-                        var move = board.Paint(file);
-                        images.Add(file);
-                        pbar.Tick($"{move.ToAsciiString()}");
-                        if (!board.HasNext)
-                        {
-                            break;
-                        }
-                        board.Move();
+                        break;
                     }
+                    board.Move();
                 }
+            }
                 
-                Console.WriteLine($"棋譜画像出力完了");
+            Console.WriteLine($"棋譜画像出力完了");
 
-                Console.WriteLine("棋譜動画出力中");
+            Console.WriteLine("棋譜動画出力中");
 
-                var outFile = options.OutputFile ?? Path.Combine(Path.GetDirectoryName(options.InputFile), $"{Path.GetFileNameWithoutExtension(options.InputFile)}.mp4");
+            var outFile = options.OutputFile ?? Path.Combine(Path.GetDirectoryName(options.InputFile), $"{Path.GetFileNameWithoutExtension(options.InputFile)}.mp4");
 
-                var argument = $"-r {options.InputFps} -i {Path.Combine(tempDir, "result%03d.png")} {options.FFmpegOptions} -r {options.OutputFps} -y {outFile}";
+            var argument = $"-r {options.InputFps} -i {Path.Combine(tempDir, "result%03d.png")} {options.FFmpegOptions} -r {options.OutputFps} -y {outFile}";
 
-                var ffmpeg = Path.Combine(options.FFmpegPath, "ffmpeg");
+            var ffmpeg = Path.Combine(options.FFmpegPath, "ffmpeg");
 
-                var psInfo = new ProcessStartInfo()
-                {
-                    FileName = ffmpeg,    // 実行するファイル 
-                    Arguments = argument,    // コマンドパラメータ（引数）
-                    CreateNoWindow = true,    // コンソール・ウィンドウを開かない
-                    UseShellExecute = false,  // シェル機能を使用しない
-                };
+            var psInfo = new ProcessStartInfo()
+            {
+                FileName = ffmpeg,    // 実行するファイル 
+                Arguments = argument,    // コマンドパラメータ（引数）
+                CreateNoWindow = true,    // コンソール・ウィンドウを開かない
+                UseShellExecute = false,  // シェル機能を使用しない
+            };
 
-                var p = Process.Start(psInfo);
-                p.WaitForExit();
-                Console.WriteLine($"ffmpeg実行結果:{p.ExitCode}");
+            Process process;
+            try
+            {
+                process = Process.Start(psInfo);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ffmpegの実行に失敗しました。{e.Message}");
+                return;
+            }
 
-                Console.WriteLine($"棋譜動画出力完了");
+            process.WaitForExit();
+            Console.WriteLine($"ffmpeg実行結果:{process.ExitCode}");
 
-                Console.WriteLine($"出力動画ファイル:{outFile}");
+            Console.WriteLine($"棋譜動画出力完了");
 
-                Console.WriteLine("棋譜画像出力中");
-                foreach (var png in images)
-                {
-                    File.Delete(png);
-                }
+            Console.WriteLine($"出力動画ファイル:{outFile}");
 
-                Directory.Delete(tempDir);
+            Console.WriteLine("棋譜画像出力中");
+            foreach (var png in images)
+            {
+                File.Delete(png);
+            }
 
-                Console.WriteLine("続行するには何かキーを押してください . . .");
-                Console.ReadKey();
+            Directory.Delete(tempDir);
+
+            Console.WriteLine("続行するには何かキーを押してください . . .");
+            Console.ReadKey();
+        }
+
+        private string ReadFile(string fileName)
+        {
+            using (var sr = new StreamReader(fileName, Encoding.Default))
+            {
+                return sr.ReadToEnd();
             }
         }
 
