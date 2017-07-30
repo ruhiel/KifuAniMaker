@@ -51,14 +51,16 @@ namespace KifuAniMaker.Shogi.Moves
             Number = number;
         }
 
-        private string PosString => IsSame ? "同" : $"{DestPosX.ToJapaneseStringX()}{DestPosY.ToJapaneseStringY()}";
+        private string PosString => IsSame ? "同　" : $"{DestPosX.ToJapaneseStringX()}{DestPosY.ToJapaneseStringY()}";
 
         private string PromoteString => IsPromote ? "成" : string.Empty;
 
         private string DropString => IsDrop ? "打" : string.Empty;
 
-        public override string ToString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}{PosString}{Piece.ToJapaneseString}{PromoteString}{DropString}";
+        public override string ToString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}{PosString}{Piece.ToJapaneseString}{PromoteString}{DropString}{SrcString}";
 
-        public virtual string ToAsciiString() => $"{Number.ToString()}{BlackWhite.ToAsciiSymbol()}{PosString}{Piece.ToJapaneseString}{PromoteString}{DropString}";
+        public virtual string ToAsciiString() => $"{Number.ToString()}{BlackWhite.ToAsciiSymbol()}{PosString}{Piece.ToJapaneseString}{PromoteString}{DropString}{SrcString}";
+
+        private string SrcString => IsDrop ? string.Empty : $"({SrcPosX.Value}{SrcPosY.Value})";
     }
 }
