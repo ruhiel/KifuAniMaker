@@ -32,7 +32,7 @@ namespace KifuAniMaker
 
             try
             {
-                boards = CSAParser.ParseContent(content);
+                boards = new CSAParser().ParseContent(content);
 
                 if(!boards.Any())
                 {

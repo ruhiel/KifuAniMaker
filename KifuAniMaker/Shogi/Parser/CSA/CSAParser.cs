@@ -11,7 +11,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
     /// <summary>
     /// http://www.computer-shogi.org/protocol/record_v22.html
     /// </summary>
-    public class CSAParser
+    public class CSAParser : IParser
     {
         // 先後手番
         public static Parser<string> BlackWhiteParser =
@@ -224,7 +224,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             }
         }
 
-        public static List<Board> ParseContent(string content)
+        public List<Board> ParseContent(string content)
         {
             var boards = new List<Board>();
             foreach(var statementList in ParseDocument(content))

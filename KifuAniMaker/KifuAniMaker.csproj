@@ -86,6 +86,8 @@
     <Compile Include="Shogi\Parser\CSA\Statement\SetTurn.cs" />
     <Compile Include="Shogi\Parser\CSA\Statement\SetVersion.cs" />
     <Compile Include="Shogi\Parser\CSA\Statement\SpecialStatement.cs" />
+    <Compile Include="Shogi\Parser\IParser.cs" />
+    <Compile Include="Shogi\Parser\KIF\KIFParser.cs" />
     <Compile Include="Shogi\Pieces\All.cs" />
     <Compile Include="Shogi\Pieces\Bishop.cs" />
     <Compile Include="Shogi\Pieces\Gold.cs" />
@@ -159,7 +161,9 @@
     <Content Include="img\sgl57.png" />
     <Content Include="img\sgl58.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Shogi\Parser\KIF\Statement\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(ProjectDir)kif\*" "$(TargetDir)"
