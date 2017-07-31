@@ -186,30 +186,30 @@ namespace KifuAniMaker.Shogi.Parser.CSA
                                         .Or(specialMoveParser)
                                         .Or(nullParser);
 
-            var moreStateParser =
+            var moreStatementParser =
                 from comma in Parse.Char(',').Token()
                 from st in oneStatementParser
                 select st;
 
             var statementParser =
-                from st in oneStatementParser.Once()
-                from mst in moreStateParser.Many()
-                select st.Concat(mst);
+                from one in oneStatementParser.Once()
+                from more in moreStatementParser.Many()
+                select one.Concat(more);
 
-            var oneRecordParser = statementParser.Many();
+            var oneDocumentParser = statementParser.Many();
 
-            var moreRecordParser = from separtor in Parse.Char('/').Token()
-                                   from rec in oneRecordParser
-                                   select rec;
+            var moreDocumentParser = from separtor in Parse.Char('/').Token()
+                                   from doc in oneDocumentParser
+                                   select doc;
 
             var documentParser =
-                (from one in oneRecordParser.Once()
-                 from more in moreRecordParser.Many()
+                (from one in oneDocumentParser.Once()
+                 from more in moreDocumentParser.Many()
                  select one.Concat(more)).End();
 
             return
-                from d in documentParser.Parse(content)
-                select d;
+                from doc in documentParser.Parse(content)
+                select doc;
         }
 
         private static IEnumerable<IEnumerable<ICSAStatement>> ParseDocument(string content)
