@@ -1,11 +1,12 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using KifuAniMaker.Shogi;
 using KifuAniMaker.Shogi.Parser.CSA;
-using System.Reflection;
-using System.Linq;
-using System.Collections.Generic;
-using KifuAniMaker.Shogi;
+using KifuAniMaker.Shogi.Parser.CSA.Statement;
 using KifuAniMaker.Shogi.Pieces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace KifuAniMakerTest
 {

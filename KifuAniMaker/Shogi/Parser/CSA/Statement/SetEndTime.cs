@@ -4,22 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KifuAniMaker.Shogi.Parser.CSA
+namespace KifuAniMaker.Shogi.Parser.CSA.Statement
 {
-    public class SetStartTime : ICSAStatement
+    public class SetEndTime : ICSAStatement
     {
         public DateTime Time { get; set; }
-        public SetStartTime(DateTime time)
+        public SetEndTime(DateTime time)
         {
             Time = time;
         }
         public Board Execute(Board board)
         {
-            board.StartTime = Time;
+            board.EndTime = Time;
 
             return board;
         }
 
-        public override string ToString() => nameof(SetStartTime);
+        public override string ToString() => nameof(SetEndTime);
     }
 }

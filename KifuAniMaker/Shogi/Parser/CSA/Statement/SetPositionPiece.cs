@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KifuAniMaker.Shogi.Parser.CSA
+namespace KifuAniMaker.Shogi.Parser.CSA.Statement
 {
     public class SetPositionPiece : ICSAStatement
     {

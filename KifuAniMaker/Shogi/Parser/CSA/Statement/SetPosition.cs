@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace KifuAniMaker.Shogi.Parser.CSA
+namespace KifuAniMaker.Shogi.Parser.CSA.Statement
 {
     public class SetPosition : ICSAStatement
     {

@@ -1,4 +1,5 @@
-﻿using Sprache;
+﻿using KifuAniMaker.Shogi.Parser.CSA.Statement;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;

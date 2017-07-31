@@ -5,6 +5,7 @@ using System.Linq;
 using Sprache;
 using KifuAniMaker.Shogi.Moves;
 using KifuAniMaker.Shogi.Utils;
+using KifuAniMaker.Shogi.Parser.CSA.Statement;
 
 namespace KifuAniMaker.Shogi.Parser.CSA
 {
