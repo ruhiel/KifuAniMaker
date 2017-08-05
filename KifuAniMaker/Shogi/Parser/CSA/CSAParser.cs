@@ -159,9 +159,10 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             // 特殊な指し手、終局状況
             var specialMoveParser =
                 from p in Parse.Char('%').Token()
+                from bw in BlackWhiteParser.Optional()
                 from key in Parse.Letter.Many().Text()
                 from ret in Parse.Regex("[\r\n]+").Optional()
-                select (ICSAStatement)new SpecialStatement(key);
+                select SpecialStatement.Create(key, bw.GetOrDefault()?.ToBlackWhite());
 
             var nullParser =
                 from value in Parse.Regex("^[^/].+")

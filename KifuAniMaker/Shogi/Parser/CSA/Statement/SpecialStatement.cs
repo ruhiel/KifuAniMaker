@@ -1,36 +1,45 @@
-﻿using KifuAniMaker.Shogi.Moves;
-using KifuAniMaker.Shogi.Utils;
+﻿using KifuAniMaker.Shogi.Parser.CSA.Statement.Special;
 using System;
-using System.Linq;
 
 namespace KifuAniMaker.Shogi.Parser.CSA.Statement
 {
-    public class SpecialStatement : ICSAStatement
+    public static class SpecialStatement
     {
-        private string key;
-
-        public SpecialStatement(string key)
-        {
-            this.key = key;
-        }
-
-        public Board Execute(Board board)
+        public static ICSAStatement Create(string key, BlackWhite? bw)
         {
             switch(key)
             {
                 case "TORYO":
-                    var number = board.Moves.Any() ? board.Moves.Count + 1 : 1;
-                    board.Moves.Add(new Resign(board.Moves.Any() ? board.Moves.Last().BlackWhite.Reverse() : BlackWhite.Black, number));
-                    break;
+                    return new ResignStatement();
                 case "CHUDAN":
-                    break;
+                    return new InterruptionStatement();
+                case "SENNICHITE":
+                    return new SennichiteStatement();
+                case "TIME_UP":
+                    return new TimeUpStatement();
+                case "ILLEGAL_MOVE":
+                    return new IllegalMoveStatement();
+                case "ILLEGAL_ACTION":
+                    return new IllegalActionStatement(bw.Value);
+                case "JISHOGI":
+                    return new JishogiStatement();
+                case "KACHI":
+                    return new WinStatement();
+                case "HIKIWAKE":
+                    return new DrawStatement();
+                case "MATTA":
+                    return new RetractMoveStatement();
+                case "TSUMI":
+                    return new CheckmateStatement();
+                case "FUZUMI":
+                    return new NotCheckmateStatement();
+                case "ERROR":
+                    return new ErrorStatement();
                 default:
-                    throw new ArgumentException();
+                    break;
             }
 
-            return board;
+            throw new ArgumentException(key);
         }
-
-        public override string ToString() => nameof(SpecialStatement) + " " + key;
     }
 }

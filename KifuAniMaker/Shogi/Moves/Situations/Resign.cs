@@ -1,4 +1,5 @@
-﻿using KifuAniMaker.Shogi.Utils;
+﻿using KifuAniMaker.Shogi.Moves.Situations;
+using KifuAniMaker.Shogi.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KifuAniMaker.Shogi.Moves
 {
-    public class Resign : Move
+    public class Resign : Situation
     {
         public Resign(BlackWhite bw, int number) : base(bw, number)
         {

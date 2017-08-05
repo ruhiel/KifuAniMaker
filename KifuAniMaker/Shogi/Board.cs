@@ -10,6 +10,7 @@ using KifuAniMaker.Shogi.Pieces;
 using KifuAniMaker.Shogi.Utils;
 using KifuAniMaker.Shogi.Moves;
 using System.Drawing.Imaging;
+using KifuAniMaker.Shogi.Moves.Situations;
 
 namespace KifuAniMaker.Shogi
 {
@@ -114,6 +115,16 @@ namespace KifuAniMaker.Shogi
         /// 駒箱
         /// </summary>
         public List<Piece> PieceBox { get; set; }
+
+        /// <summary>
+        /// 次の指し手番号
+        /// </summary>
+        public int NextMoveNumber => Moves.Any() ? Moves.Count + 1 : 1;
+
+        /// <summary>
+        /// 次の指し手先後
+        /// </summary>
+        public BlackWhite NextBlackWhite => Moves.Any() ? Moves.Last().BlackWhite.Reverse() : BlackWhite.Black;
 
         /// <summary>
         /// コンストラクタ
@@ -429,7 +440,7 @@ namespace KifuAniMaker.Shogi
             var move = Moves.First();
             var destPosX = move.DestPosX;
             var destPosY = move.DestPosY;
-            if(move is Resign)
+            if(move is Situation)
             {
                 Moves.Remove(move);
                 Moved.Add(move);
