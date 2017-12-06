@@ -127,6 +127,11 @@ namespace KifuAniMaker.Shogi
         public BlackWhite NextBlackWhite => Moves.Any() ? Moves.Last().BlackWhite.Reverse() : BlackWhite.Black;
 
         /// <summary>
+        /// ディレクトリパス
+        /// </summary>
+        private string LocalDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public Board()
@@ -272,7 +277,7 @@ namespace KifuAniMaker.Shogi
         {
             Move firstMove;
             //画像ファイルを読み込んでImageオブジェクトを作成する
-            using (var img = new Bitmap(@"img\japanese-chess-b02.png"))
+            using (var img = new Bitmap(Path.Combine(LocalDir, @"img\japanese-chess-b02.png")))
             using (var g = Graphics.FromImage(img))
             {
                 const float baseX = 30.0f;
@@ -286,7 +291,7 @@ namespace KifuAniMaker.Shogi
                         var piece = _Pieces[i, j];
                         if (piece != null)
                         {
-                            using (var img2 = new Bitmap(@"img\" + piece.ImageFile))
+                            using (var img2 = new Bitmap(Path.Combine(LocalDir, $"img\\{piece.ImageFile}")))
                             {
                                 g.DrawImage(img2, new PointF(baseX + j * 60, baseY + i * 64));
                             }
@@ -297,10 +302,10 @@ namespace KifuAniMaker.Shogi
                 // 駒台
                 _BlackHands.Sort(ComparePiece);
                 var groups1 = _BlackHands.GroupBy(x => x.GetType());
-                for(var i = 0; i < groups1.Count(); i++)
+                for (var i = 0; groups1.Skip(i).Any(); i++)
                 {
                     var group = groups1.ElementAt(i);
-                    using (var img2 = new Bitmap(@"img\" + group.First().ImageFile))
+                    using (var img2 = new Bitmap(Path.Combine(LocalDir, $"img\\{group.First().ImageFile}")))
                     {
                         g.DrawImage(img2, new PointF(i * 60, 750.0f));
                     }
@@ -310,10 +315,10 @@ namespace KifuAniMaker.Shogi
 
                 _WhiteHands.Sort(ComparePiece);
                 var groups2 = _WhiteHands.GroupBy(x => x.GetType());
-                for (var i = 0; i < groups2.Count(); i++)
+                for (var i = 0; groups2.Skip(i).Any(); i++)
                 {
                     var group = groups2.ElementAt(i);
-                    using (var img2 = new Bitmap(@"img\" + group.First().ImageFile))
+                    using (var img2 = new Bitmap(Path.Combine(LocalDir, $"img\\{group.First().ImageFile}")))
                     {
                         g.DrawImage(img2, new PointF(i * 60, 0.0f));
                     }
@@ -325,20 +330,20 @@ namespace KifuAniMaker.Shogi
 
                 var list = Moved.Any() ? new List<Move>() { Moved.Last() }.Concat(Moves.Take(9)) : Moves.Take(10);
 
-                foreach (var element in list.Select((move , index) => new { move, index }))
+                foreach (var element in list.Select((move, index) => new { move, index }))
                 {
                     g.DrawString(element.move.ToString(), new Font("MS UI Gothic", 24), Brushes.Black, 600, 100 + element.index * 60);
                 }
 
                 firstMove = list.First();
 
-                if(Moved.Any() && !(firstMove is Resign))
+                if (Moved.Any() && !(firstMove is Resign))
                 {
-                    g.DrawRectangle(new Pen(Brushes.Red, 5), baseX + (9-firstMove.DestPosX) * 60, baseY + (firstMove.DestPosY - 1) * 64, 60, 64);
+                    g.DrawRectangle(new Pen(Brushes.Red, 5), baseX + (9 - firstMove.DestPosX) * 60, baseY + (firstMove.DestPosY - 1) * 64, 60, 64);
                 }
 
                 g.DrawString($"{BlackWhite.Black.ToSymbol()}{BlackPlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 700);
-                
+
                 //作成した画像を保存する
                 img.Save(path, ImageFormat.Png);
             }
@@ -355,8 +360,8 @@ namespace KifuAniMaker.Shogi
             {
                 var degit10 = count / 10;
                 var degit1 = count % 10;
-                using (var img10 = new Bitmap(@"img\" + "number3_4" + degit10 + ".png"))
-                using (var img1 = new Bitmap(@"img\" + "number3_4" + degit1 + ".png"))
+                using (var img10 = new Bitmap(Path.Combine(LocalDir, $"img\\number3_4{degit10}.png")))
+                using (var img1 = new Bitmap(Path.Combine(LocalDir, $"img\\number3_4{degit1}.png")))
                 {
                     g.DrawImage(img10, new PointF(index * 60 + 55, bw == BlackWhite.Black ? 750.0f : 0.0f));
                     g.DrawImage(img1, new PointF(index * 60 + 65, bw == BlackWhite.Black ? 750.0f : 0.0f));
@@ -365,7 +370,7 @@ namespace KifuAniMaker.Shogi
             }
             else
             {
-                using (var img1 = new Bitmap(@"img\" + "number3_4" + count + ".png"))
+                using (var img1 = new Bitmap(Path.Combine(LocalDir, $"img\\number3_4{count}.png")))
                 {
                     g.DrawImage(img1, new PointF(index * 60 + 55, bw == BlackWhite.Black ? 750.0f : 0.0f));
                 }
