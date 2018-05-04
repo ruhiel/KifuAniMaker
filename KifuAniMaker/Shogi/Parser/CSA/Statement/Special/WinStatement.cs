@@ -1,4 +1,5 @@
 ﻿using KifuAniMaker.Shogi.Moves.Situations;
+using KifuAniMaker.Shogi.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA.Statement.Special
     {
         public Board Execute(Board board)
         {
-            board.Moves.Add(new Win(board.Moves.Last().BlackWhite, board.NextMoveNumber));
+            board.Moves.Add(new Win(board.Moves.Last().BlackWhite.Reverse(), board.NextMoveNumber));
 
             return board;
         }

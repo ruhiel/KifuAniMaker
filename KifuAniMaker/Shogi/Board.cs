@@ -332,12 +332,12 @@ namespace KifuAniMaker.Shogi
 
                 foreach (var element in list.Select((move, index) => new { move, index }))
                 {
-                    g.DrawString(element.move.ToString(), new Font("MS UI Gothic", 24), Brushes.Black, 600, 100 + element.index * 60);
+                    g.DrawString(element.move.ToString(), new Font("MS UI Gothic", 22), Brushes.Black, 600, 100 + element.index * 60);
                 }
 
                 firstMove = list.First();
 
-                if (Moved.Any() && !(firstMove is Resign))
+                if (Moved.Any() && !(firstMove is Situation))
                 {
                     g.DrawRectangle(new Pen(Brushes.Red, 5), baseX + (9 - firstMove.DestPosX) * 60, baseY + (firstMove.DestPosY - 1) * 64, 60, 64);
                 }
