@@ -18,15 +18,8 @@ namespace KifuAniMaker
             set;
         }
 
-        [Option('i', Required = true, HelpText = "入力棋譜ファイルパス")]
+        [Option('f', Required = true, HelpText = "入力棋譜ファイルパス")]
         public string InputFile
-        {
-            get;
-            set;
-        }
-
-        [Option('f', DefaultValue = "csa", HelpText = "棋譜ファイル形式(csa|kif|ki2)")]
-        public string Format
         {
             get;
             set;
@@ -39,14 +32,14 @@ namespace KifuAniMaker
             set;
         }
 
-        [Option("if", DefaultValue = 1, HelpText = "入力FPS")]
+        [Option('s', DefaultValue = 1, HelpText = "入力FPS")]
         public int InputFps
         {
             get;
             set;
         }
 
-        [Option("of", DefaultValue = 30, HelpText = "入力FPS")]
+        [Option('e', DefaultValue = 30, HelpText = "出力FPS")]
         public int OutputFps
         {
             get;
