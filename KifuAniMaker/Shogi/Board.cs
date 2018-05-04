@@ -326,7 +326,7 @@ namespace KifuAniMaker.Shogi
                     DrawNum(g, group.Count(), i, BlackWhite.White);
                 }
 
-                g.DrawString($"{BlackWhite.White.ToSymbol()}{WhitePlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 40);
+                g.DrawString($"{BlackWhite.White.ToSymbol()}{WhitePlayer}", new Font("MS UI Gothic", 20), Brushes.Black, 600, 40);
 
                 var list = Moved.Any() ? new List<Move>() { Moved.Last() }.Concat(Moves.Take(9)) : Moves.Take(10);
 
@@ -342,7 +342,7 @@ namespace KifuAniMaker.Shogi
                     g.DrawRectangle(new Pen(Brushes.Red, 5), baseX + (9 - firstMove.DestPosX) * 60, baseY + (firstMove.DestPosY - 1) * 64, 60, 64);
                 }
 
-                g.DrawString($"{BlackWhite.Black.ToSymbol()}{BlackPlayer}", new Font("MS UI Gothic", 24), Brushes.Black, 600, 700);
+                g.DrawString($"{BlackWhite.Black.ToSymbol()}{BlackPlayer}", new Font("MS UI Gothic", 20), Brushes.Black, 600, 700);
 
                 //作成した画像を保存する
                 img.Save(path, ImageFormat.Png);
