@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -126,10 +127,24 @@ namespace KifuAniMaker
 
         private string ReadFile(string fileName)
         {
-            using (var sr = new StreamReader(fileName, Encoding.Default))
+            if(fileName.StartsWith("http"))
             {
-                return sr.ReadToEnd();
+                using (var wc = new WebClient())
+                using (var st = wc.OpenRead(fileName))
+                using (var sr = new StreamReader(st, Encoding.Default))
+                {
+                    return sr.ReadToEnd();
+                }
             }
+            else
+            {
+                using (var sr = new StreamReader(fileName, Encoding.Default))
+                {
+                    return sr.ReadToEnd();
+                }
+            }
+
+
         }
 
         public IEnumerable<string> FrameFileEnumerator(string dir)
