@@ -160,7 +160,7 @@ namespace KifuAniMaker.Shogi.Parser.CSA
             var specialMoveParser =
                 from p in Parse.Char('%').Token()
                 from bw in BlackWhiteParser.Optional()
-                from key in Parse.Letter.Many().Text()
+                from key in Parse.Regex("[_A-Z]+")
                 from ret in Parse.Regex("[\r\n]+").Optional()
                 select SpecialStatement.Create(key, bw.GetOrDefault()?.ToBlackWhite());
 

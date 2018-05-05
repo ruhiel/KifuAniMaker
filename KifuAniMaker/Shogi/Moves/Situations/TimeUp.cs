@@ -13,8 +13,8 @@ namespace KifuAniMaker.Shogi.Moves.Situations
         {
         }
 
-        public override string ToString() => $"{BlackWhite.ToJapaneseString()}時間切れ負け";
+        public override string ToString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}時間切れ";
 
-        public override string ToAsciiString() => $"{BlackWhite.ToJapaneseString()}時間切れ負け";
+        public override string ToAsciiString() => $"{Number.ToString()}{BlackWhite.ToSymbol()}時間切れ";
     }
 }
